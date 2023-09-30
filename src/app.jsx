@@ -13,6 +13,7 @@ import { Router, Link } from "wouter";
 
 // Import and apply CSS stylesheet
 import 'reactflow/dist/style.css';
+import "react-widgets/styles.css";
 import "./styles/styles.css";
 
 // Where all of our pages come from

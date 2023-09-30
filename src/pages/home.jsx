@@ -1,35 +1,52 @@
 import * as React from "react";
 
-import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import TextField from "@mui/material/TextField";
-
 import { useSelector, useDispatch } from "react-redux";
 import {
   addCard,
   addEdge,
+  addItemToTag,
   addSpeech,
+  createTag,
+  editSpeechTitle,
+  escapeStatus,
   moveUp,
   moveDown,
   moveLeft,
-  moveRight
+  moveRight,
+  removeTagFromItem,
+  setInstance,
+  setSelectedNode,
+  setSelectedTags,
+  setShouldCenterOnActive,
+  setSpeechNodes,
+  setSpeechYPosition,
+  setStatus
 } from "../slices/flowSlice";
 
-import ReactFlow, {
-  MiniMap,
-  Controls,
-  Background,
-  Panel
-} from 'reactflow';
+import ReactFlow, { Panel } from 'reactflow';
+import {Helmet} from "react-helmet-async";
+
+import Multiselect from "react-widgets/Multiselect";
 
 import BasicCardNode from "../components/basicCardNode";
+import ArgumentNode from "../components/argumentNode";
 import HighlightedCardNode from "../components/highlightedCardNode";
 import SpeechLabelNode from "../components/speechLabelNode";
 import TextEntryNode from "../components/textEntryNode";
+
+window.instance = {};
+
+function debounce(func, timeout = 5){
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => { func.apply(this, args); }, timeout);
+  };
+}
+
+function generateEdgeId(edge) {
+  return `${edge.source} - ${edge.target}`;
+}
 
 function useKeyPress(targetKey) {
   const [keyPressed, setKeyPressed] = React.useState(false);
@@ -37,15 +54,15 @@ function useKeyPress(targetKey) {
 
   function moveHandler({ key }) {
     if (key === targetKey) {
-      console.log(targetKey, "down");
       if (targetKey === "ArrowDown") {
         dispatch(moveDown());
       } else if (targetKey === "ArrowUp") {
         dispatch(moveUp());
-      } else if (targetKey === "ArrowLeft") {
-        dispatch(moveLeft());
-      } else if (targetKey === "ArrowRight") {
-        dispatch(moveRight());
+      } else if (targetKey === "t") {
+        console.log('tagging');
+        dispatch(setStatus('tagging'));
+      } else if (targetKey === "Escape") {
+        dispatch(escapeStatus());
       }
     }
   }
@@ -57,9 +74,49 @@ function useKeyPress(targetKey) {
     };
   }, []);
 
-  console.log(keyPressed, targetKey);
   return keyPressed;
 }
+
+function handleCardContentsEdit(event) {
+  const dispatch = useDispatch();
+
+  if (event.target.value.includes("\n")) {
+    const val = event.target.value.replace("\n", "");
+    if (val != "") {
+      dispatch(addCard({card: val, speechId: 0}));
+    }
+    setCardContent("");
+  } else {
+    setCardContent(event.target.value);
+  }
+};
+
+function handleSpeechContentsEdit(event) {
+  const dispatch = useDispatch();
+
+  if (event.target.value.includes("\n")) {
+    const val = event.target.value.replace("\n", "");
+    if (val != "") {
+      dispatch(addSpeech(val));
+    }
+    setSpeechContent("");
+  } else {
+    setSpeechContent(event.target.value);
+  }
+};
+
+function onEdgesChange(event) {
+  addEdge();
+};
+
+const nodeTypes = {
+  textEntry: TextEntryNode,
+  basic: BasicCardNode,
+  highlighted: HighlightedCardNode,
+  speechLabel: SpeechLabelNode,
+  argument: ArgumentNode
+};
+
 
 export default function Home(props) {
   const [cardContent, setCardContent] = React.useState("");
@@ -68,109 +125,154 @@ export default function Home(props) {
   const cursorCellId = useSelector((state) => state.flow.cellId);
   const cursorSpeechId = useSelector((state) => state.flow.speechId);
   const edges = useSelector((state) => state.flow.edges);
-  const speeches = useSelector((state) => state.flow.speeches);
+  const meta = useSelector((state) => state.flow.meta);
+  const selectedTags = useSelector((state) => state.flow.selectedTags);
+  const speechYPosition = useSelector((state) => state.flow.speechYPosition);
+  const shouldCenterOnActive = useSelector((state) => state.flow.shouldCenterOnActive);
+  const status = useSelector((state) => state.flow.status);
+  const tags = useSelector((state) => state.flow.tags);
+  const title = useSelector((state) => state.flow.title);
+
   const dispatch = useDispatch();
-  
-  console.log(props);
-  console.log(speeches);
 
   const downPress = useKeyPress("ArrowDown");
   const upPress = useKeyPress("ArrowUp");
   const leftPress = useKeyPress("ArrowLeft");
   const rightPress = useKeyPress("ArrowRight");
 
+  const tagShortcut = useKeyPress("t");
+
   if (downPress) {
-    if (cards.length > props.selectedCard) {
+    console.log('down');
+    if (status == 'navigating' && cards.length > props.selectedCard) {
       props.setSelectedCard(props.selectedCard + 1);
-      console.log("setting");
     }
   } else if (upPress) {
-    if (props.selectedCard > 0) {
+    console.log('up');
+    if (status == 'navigating' && props.selectedCard > -1) {
       props.setSelectedCard(props.selectedCard - 1);
     }
+  } else if (tagShortcut) {
+    console.log('whoo');
   }
 
-  const handleCardContentsEdit = (event) => {
-    if (event.target.value.includes("\n")) {
-      const val = event.target.value.replace("\n", "");
-      if (val != "") {
-        console.log("adding", val);
-        dispatch(addCard({card: val, speechId: 0}));
-      }
-      setCardContent("");
-    } else {
-      setCardContent(event.target.value);
+  const speeches = [];
+  cards.forEach((card, cardIdx) => {
+    if (speeches.indexOf(card.speech) == -1) {
+      speeches.push(card.speech);
     }
-  };
-
-  const handleSpeechContentsEdit = (event) => {
-    console.log("event", event.target.value);
-    if (event.target.value.includes("\n")) {
-      console.log("hello)")
-      const val = event.target.value.replace("\n", "");
-      if (val != "") {
-        console.log("submitting", val);
-        dispatch(addSpeech(val));
-      }
-      setSpeechContent("");
-    } else {
-      setSpeechContent(event.target.value);
-    }
-  };
-  
-  const onEdgesChange = (event) => {
-    addEdge();
-  };
-  
-  const onConnect = (event) => {
-    console.log("connecting", event);
-    dispatch(addEdge({ source: event.source, target: event.target }));
-  }
-
-  const renderedCards = [];
-  /*
-  cards.forEach((card, idx) => {
-    renderedCards.push(
-      <Card sx={{ minWidth: 275, margin: 2 }} raised={cursor == idx}>
-        <CardContent>{card}</CardContent>
-      </Card>
-    );
   });
-  */
+
+  const columnPadding = 50;
+  const columnWidth = (window.innerWidth - (columnPadding * (speeches.length - 1))) / speeches.length;
 
   const renderedNodes = [];
-  console.log('cards', cards);
-  cards.forEach((speech, speechIdx) => {
-    console.log(speechIdx, cursorSpeechId, cursorCellId, speech.length);
-    console.log('speech', speech);
-    speech.forEach((card, cardIdx) => {
-      console.log('card', card);
-      renderedNodes.push({
-        id: "card_" + speechIdx + '_' + cardIdx,
-        position: { x: 200 * speechIdx + 15, y: 100 * (cardIdx + 1) },
-        data: { label: card },
-      });
+  let yPosition = 0;
+  const yPadding = 5;
+  const recenterPadding = 150;
+
+  const sourceEdges = [];
+  const targetEdges = [];
+
+  const clusters = {};
+  edges.forEach(edge => {
+    if (Object.keys(clusters).indexOf(edge.source) == -1) {
+      clusters[edge.source] = edge.source;
+      clusters[edge.target] = edge.source;
+    } else {
+      clusters[edge.target] = clusters[edge.source];
+    }
+  });
+
+  let recenterY = -1;
+  let activeNode = null;
+  const allTags = Object.keys(tags);
+  cards.forEach((card, cardIdx) => {
+    const speechIdx = speeches.indexOf(card.speech);
+    const cardId = `card_${card.id}`;
+
+    const clusterId = clusters[cardId];
+
+    const active = cursorCellId == cardId;
+
+    const cardTags = [];
+    allTags.forEach(key => {
+      if (tags[key].indexOf(clusterId) != -1) {
+        cardTags.push(key);
+      }
     });
-    
+    let isSelectedTag = false;
+    if (selectedTags.length === 0) {
+      isSelectedTag = true;
+    } else {
+      isSelectedTag = true;
+      selectedTags.forEach(tag => {
+        if (tags[tag].indexOf(clusterId) === -1) {
+          isSelectedTag = false;
+        }
+      });
+    }
+
+    if (isSelectedTag) {
+      const node = {
+        id: cardId,
+        position: { x: columnWidth * speechIdx + (columnPadding * speechIdx + 1), y: yPosition },
+        data: {
+          text: card.text,
+          active,
+          sourceHandle: true,
+          targetHandle: true,
+          id: card.id,
+          tags: cardTags,
+          allTags,
+          addTag: tag => dispatch(addItemToTag({ item: clusterId, tag})),
+          removeTag: tag => dispatch(removeTagFromItem({ item: clusterId, tag})),
+          createTag: tag => dispatch(createTag(tag))
+        },
+        type: 'argument',
+        style: {width: columnWidth}
+      };
+
+      if (active) {
+        activeNode = node;
+        yPosition += yPadding * 10;
+      } else {
+        renderedNodes.push(node);
+      }
+
+      if (shouldCenterOnActive && active) {
+        recenterY = yPosition - recenterPadding;
+      }
+
+      yPosition += card.height + yPadding;
+    }
+
+    /*
     if (speechIdx == cursorSpeechId && cursorCellId == speech.length) {
       renderedNodes.push({
         id: "card-entry-" + speechIdx,
-        position: { x: 200 * speechIdx + 15, y: 100 * (speech.length + 1) },
-        type: 'textEntry'
+        position: { x: 200 * speechIdx + 37, y: 100 * (speech.length + 1.2) },
+        type: 'textEntry',
+        // style: { border: 'none' },
       }); 
     }
+    */
   });
-  
-  const renderedSpeeches = [];
-  speeches.forEach((speech, idx) => {
-    renderedNodes.push({
-      id: "speech_" + idx,
-      position: { x: 200 * idx, y: 0},
-      data: { label: speech },
-      type: 'speechLabel'
+
+  if (activeNode) {
+    renderedNodes.push(activeNode);
+  }
+
+  if (shouldCenterOnActive && recenterY != -1) {
+    console.log('centering', recenterY);
+    window.instance.setViewport({
+      x: window.instance.getViewport().x,
+      y: recenterY * -1,
+      zoom: window.instance.getZoom()
     });
-  });
-  
+    setShouldCenterOnActive(false);
+  }
+
   const renderedEdges = [];
   edges.forEach((edge, idx) => {
     renderedEdges.push({
@@ -179,48 +281,116 @@ export default function Home(props) {
       target: edge.target
     });
   });
-  
-  const nodeTypes = {
-    textEntry: TextEntryNode,
-    basic: BasicCardNode,
-    highlighted: HighlightedCardNode,
-    speechLabel: SpeechLabelNode
-  };
 
   /*
-  <Card sx={{ minWidth: 275, margin: 2 }} raised>
-    <CardContent>
-      <TextField
-        id="new-speech"
-        label="New speech"
-        variant="standard"
-        fullWidth
-        multiline
-        maxRows={1}
-        value={speechContent}
-        onChange={handleSpeechContentsEdit}
-      />
-    </CardContent>
-  </Card>
-  <Card sx={{ minWidth: 275, margin: 2 }} raised>
-    <CardContent>
-      <TextField
-        autoFocus={false}
-        id="new-card"
-        label="New card"
-        variant="standard"
-        multiline
-        fullWidth
-        maxRows={4}
-        value={cardContent}
-        onChange={handleCardContentsEdit}
-      />
-    </CardContent>
-  </Card>
+  console.log(JSON.stringify(edges));
+  console.log(JSON.stringify(cards));
+  console.log(JSON.stringify(clusters));
+  console.log(JSON.stringify(tags));
   */
+
+  const clusterHeads = {};
+  Object.keys(clusters).forEach(key => {
+    if (Object.keys(clusterHeads).indexOf(clusters[key]) == -1) {
+      clusterHeads[clusters[key]] = 0;
+    }
+    clusterHeads[clusters[key]] += 1;
+  });
+  
+  const renderedSpeeches = [];
+  /*
+  speeches.forEach((speech, idx) => {
+    const isEditing = idx == cursorSpeechId && cursorCellId == -1 && false;
+    renderedNodes.push({
+      id: "speech_" + idx,
+      position: { x: columnWidth * idx + (columnPadding * idx + 1), y: speechYPosition},
+      data: { label: speech, isEditing },
+      type: isEditing ? 'textEntry' : 'speechLabel',
+      style: { width: columnWidth },
+      zIndex: -1
+    });
+  });
+  */
+
+  const onMove = (event, viewport) => {
+    if (viewport.y > 0) {
+      window.instance.setViewport({ x: viewport.x, y: 0, zoom: viewport.zoom });
+    }
+  }
+  
+  const onInit = (instance) => {
+    console.log('init', speeches);
+    window.instance = instance;
+  
+    const positionCards = [];
+    instance.getNodes().forEach(node => {
+      if (node.id.startsWith('card_')) {
+        const speech = speeches[node.id.split('_')[1]];
+        positionCards.push({ speech, text: node.data.text, height: node.height, width: node.width });
+      }
+    });
+    // console.log(JSON.stringify(positionCards));
+
+    speeches.forEach(speech => {
+      const tag = `Winner: ${speech}`
+      if (Object.keys(tags).indexOf(tag) === -1) {
+        dispatch(createTag(tag));
+      }
+    })
+  }
+
+  const onNodeClick = (event, node) => {
+    console.log(node.id);
+    if (node.id !== null && node.id !== cursorCellId) {
+      console.log('dispatching');
+      dispatch(setSelectedNode(node.id));
+    }
+    if (status !== 'node') {
+      dispatch(setStatus('node'));
+    }
+  }
+
+  const onConnect = (event) => {
+    dispatch(addEdge({ source: event.source, target: event.target }));
+  }
+
+  const onSetSelectedTags = (event) => {
+    console.log(event);
+    dispatch(setSelectedTags(event));
+  }
+
+  const speechNav = [];
+  speeches.forEach((speech, idx) => {
+    speechNav.push(
+      <span
+        style={{ left: columnWidth * idx + (columnPadding * idx + 1), width: columnWidth }}
+        className="speechLabel"
+      >
+        {speech}
+      </span>
+    );
+  });
   
   return (
     <div>
+      <Helmet>
+        <title>Flower: {title}</title>
+      </Helmet>
+      <div id="speakers">
+        <div id="header">
+          <h2 id="debateTitle">{title}</h2>
+          <span id="debateAbout" dangerouslySetInnerHTML={{__html: meta}} />
+          <span id="tagSelect">
+            <Multiselect
+              data={allTags}
+              placeholder="filter tags"
+              value={selectedTags}
+              onChange={onSetSelectedTags}
+            />
+          </span>
+        </div>
+        {speechNav}
+      </div>
       <div style={{ width: "100vw", height: "100vh" }}>
         <ReactFlow
           nodes={renderedNodes}
@@ -228,9 +398,17 @@ export default function Home(props) {
           nodeTypes={nodeTypes}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
+          onInit={onInit}
+          onNodeClick={onNodeClick}
+          onlyRenderVisibleElements={true}
+          zoomOnScroll={false}
+          zoomOnDoubleClick={false}
+          panOnScroll={true}
+          panOnScrollMode={'vertical'}
+          onMove={debounce((event, viewport) => onMove(event, viewport))}
           proOptions={{hideAttribution: true}}
         >
-          <Panel position="top-left">{cursorSpeechId} - {cursorCellId}</Panel>
+          <Panel position="top-left"></Panel>
         </ReactFlow>
       </div>
     </div>
