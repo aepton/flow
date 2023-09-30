@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const response = await fetch('../src/data/37th_debate_height.json');
-const cards = await response.json();
+const response = {}; // await fetch('../src/data/37th_debate_height.json');
+const cards = []; // await response.json();
 
 cards.forEach(card => {
   if (!card.id) {
