@@ -6,7 +6,7 @@ function SpeechLabelNode({ data }) {
   }, []);
 
   return (
-    <div className="speech-label=node">{data.label}</div>
+    <div className="speech-label-node">{data.isEditing ? 'HHH' : ''}{data.label}</div>
   );
 }
 

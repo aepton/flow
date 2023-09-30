@@ -36,7 +36,6 @@ to this section's matching END comment to see page-specific styles.
 
 .footer a:not(.btn--remix):link,
 a:not(.btn--remix):visited {
-  font-family: HK Grotesk;
   font-style: normal;
   font-weight: normal;
   font-size: 1.1rem;
@@ -62,7 +61,7 @@ END Glitch hello-app default styles
 
 /* Page structure */
 body {
-  font-family: HK Grotesk;
+  font-family: Arial, Helvetica, sans-serif;
   background-color: var(--color-bg);
   margin: 0;
 }
@@ -83,7 +82,6 @@ body {
 /* Page titles */
 h1 {
   color: #2800FF;
-  font-family: HK Grotesk;
   font-style: normal;
   font-weight: bold;
   font-size: 100px;
@@ -130,13 +128,62 @@ h1 {
 .instructions p {
   font-size: 1rem;
 }
+
+.react-flow__handle {
+  background-color: #fff;
+  border-radius: 0;
+  width: 100%;
+}
+
+.react-flow__handle:hover {
+  animation: fadeIn 1s;
+  background-color: #000;
+}
+
 h2 {
   color: #2800FF;
 }
 
 .text-entry-node {
-  background-color: red;
-  padding: 5px;
+  padding: 0px;
+}
+
+.speech-label-node {
+  border-bottom: 5px solid black;
+  padding: 10px;
+  background: white;
+  text-align: center;
+  animation: fadeIn 0.2s;
+  box-shadow: 5px 10px 10px #ccc;
+}
+
+.react-flow__node-speechLabel {
+  z-index: 9999 !important;
+}
+
+.text-entry-node > textarea {
+  border: none;
+  outline: none;
+  resize: none;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+}
+
+.argument-node {
+  border: none;
+  font-size: 16px;
+  text-align: center;
+  padding: 10px;
+  z-index: 999 !important;
+}
+
+.active-node {
+  box-shadow: 5px 10px 10px #ccc;
+  animation: fadeIn 0.1s; 
+}
+
+.selected {
+  z-index: 9999 !important;
 }
 
 #cursor-position {
@@ -148,4 +195,49 @@ h2 {
 #flow-container {
   width: "100vw";
   height: "100vh";
+}
+
+.rw-multiselect {
+  padding-top: 10px;
+}
+
+.rw-widget-input {
+  border: none;
+  box-shadow: none;
+  z-index: 9999 !important;
+}
+
+.rw-popup-container {
+  z-index: 9999 !important;
+  overflow: visible;
+}
+
+#speakers {
+  width: 100%;
+  height: 80px;
+  position: sticky;
+  top: 0;
+  left: 0;
+  box-shadow: 5px 5px 10px #ccc;
+  z-index: 9999 !important;
+  background: #fff;
+}
+
+.speechLabel {
+  position: absolute;
+  text-align: center;
+  padding: 10px;
+  z-index: 9999 !important;
+}
+
+#debateTitle {
+  color: #000;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }

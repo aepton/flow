@@ -6,7 +6,7 @@ function HighlightedCardNode({ data }) {
   }, []);
 
   return (
-    <div className="highlighted-card-node" style="background: red" />
+    <div className="highlighted-card-node" style="border: red" />
   );
 }
 
