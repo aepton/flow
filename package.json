@@ -1,9 +1,9 @@
 {
-  "name": "glitch-hello-react",
+  "name": "flow-debate",
   "version": "0.0.5",
-  "description": "A simple React single page app, built with Vite and React.",
+  "description": "Flow debate rounds",
   "scripts": {
-    "start": "vite",
+    "start": "vite build",
     "build": "vite build",
     "serve": "vite preview"
   },
@@ -24,7 +24,7 @@
     "wouter": "^2.9.0"
   },
   "devDependencies": {
-    "vite": "^3.0.0"
+    "vite": "^3.2.7"
   },
   "browserslist": [
     ">0.2%",
