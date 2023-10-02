@@ -3,7 +3,7 @@ services:
 - build_command: npm run build
   environment_slug: node-js
   github:
-    branch: main
+    branch: master
     deploy_on_push: true
     repo: aepton/flow
   name: flow
