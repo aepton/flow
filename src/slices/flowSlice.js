@@ -5,15 +5,7 @@ import dataLoader from "../components/dataLoader";
 export const flowSlice = createSlice({
   name: "flow",
   initialState: {
-    cards: () => {
-      const cards = dataLoader();
-      cards.forEach(card => {
-        if (!card.id) {
-          card.id = self.crypto.randomUUID();
-        }
-      });
-      return cards;
-    },
+    cards: dataLoader(),
     cellId: -1,
     clusters: {},
     edges: [
