@@ -34,6 +34,8 @@ import HighlightedCardNode from "../components/highlightedCardNode";
 import SpeechLabelNode from "../components/speechLabelNode";
 import TextEntryNode from "../components/textEntryNode";
 
+import dataUrl from '../data/37th_debate_height.json';
+
 window.instance = {};
 
 function debounce(func, timeout = 5){
@@ -374,7 +376,7 @@ export default function Home(props) {
   return (
     <div>
       <Helmet>
-        <title>Flower: {title}</title>
+        <title>Flow: {title}</title>
       </Helmet>
       <div id="speakers">
         <div id="header">
