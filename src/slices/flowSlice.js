@@ -1,18 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const response = {}; // await fetch('../src/data/37th_debate_height.json');
-const cards = []; // await response.json();
-
-cards.forEach(card => {
-  if (!card.id) {
-    card.id = self.crypto.randomUUID();
-  }
-})
+import dataLoader from "../components/dataLoader";
 
 export const flowSlice = createSlice({
   name: "flow",
   initialState: {
-    cards,
+    cards: () => {
+      const cards = dataLoader();
+      cards.forEach(card => {
+        if (!card.id) {
+          card.id = self.crypto.randomUUID();
+        }
+      });
+      return cards;
+    },
     cellId: -1,
     clusters: {},
     edges: [
