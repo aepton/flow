@@ -8,6 +8,7 @@ export const flowSlice = createSlice({
     clusters: {},
     date: null,
     edges: [],
+    editingMode: false,
     instance: null,
     moderators: [],
     selectedNode: null,

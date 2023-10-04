@@ -18,12 +18,13 @@ function ArgumentNode({ data }) {
   });
 
   let className = `argument-node ${data.active ? 'active-node' : ''}`;
+  let handleClass = data.editingMode ? 'edit-handle' : 'noedit-handle';
 
   return (
     <div className={className}>
         {false && <Handle type="target" position={Position.Top} style={{ background: 'black' }} />}
-        {data.sourceHandle && <Handle type="source" position={Position.Bottom} /> }
-        {data.targetHandle && <Handle type="target" position={Position.Top} /> }
+        {data.sourceHandle && <Handle type="source" position={Position.Bottom} className={handleClass} /> }
+        {data.targetHandle && <Handle type="target" position={Position.Top} className={handleClass} /> }
         <div className="argument-text">
           {data.text}
         </div>

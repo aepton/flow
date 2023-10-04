@@ -15,7 +15,8 @@ import {
   setInitialStateForRound,
   setSelectedNode,
   setShouldCenterOnActive,
-  setStatus
+  setStatus,
+  setCards
 } from "../slices/flowSlice";
 
 import ReactFlow, { Panel } from 'reactflow';
@@ -106,6 +107,7 @@ export default function Home(props) {
   const cards = useSelector((state) => state.flow.cards);
   const cursorCellId = useSelector((state) => state.flow.cellId);
   const edges = useSelector((state) => state.flow.edges);
+  const editingMode = useSelector((state) => state.flow.editingMode);
   const selectedTags = useSelector((state) => state.flow.selectedTags);
   const shouldCenterOnActive = useSelector((state) => state.flow.shouldCenterOnActive);
   const status = useSelector((state) => state.flow.status);
@@ -149,7 +151,7 @@ export default function Home(props) {
 
   const renderedNodes = [];
   let yPosition = 0;
-  const yPadding = 5;
+  const yPadding = 30;
   const recenterPadding = 150;
 
   const sourceEdges = [];
@@ -168,6 +170,7 @@ export default function Home(props) {
   let recenterY = -1;
   let activeNode = null;
   const allTags = Object.keys(tags);
+  let dirty = false;
   if (cards.forEach) {
     cards.forEach((card, cardIdx) => {
       const speechIdx = speeches.indexOf(card.speech);
@@ -194,6 +197,11 @@ export default function Home(props) {
           }
         });
       }
+
+      const visible = Object.keys(card).indexOf('height') !== -1;
+      if (!visible) {
+        dirty = true;
+      }
   
       if (isSelectedTag) {
         const node = {
@@ -202,17 +210,20 @@ export default function Home(props) {
           data: {
             text: card.text,
             active,
+            editingMode,
             sourceHandle: true,
             targetHandle: true,
             id: card.id,
             tags: cardTags,
             allTags,
+            speech: card.speech,
             addTag: tag => dispatch(addItemToTag({ item: clusterId, tag})),
             removeTag: tag => dispatch(removeTagFromItem({ item: clusterId, tag})),
             createTag: tag => dispatch(createTag(tag))
           },
+          selectable: editingMode,
           type: 'argument',
-          style: {width: columnWidth}
+          style: {width: columnWidth, opacity: visible ? 1 : 0}
         };
   
         if (active) {
@@ -226,7 +237,7 @@ export default function Home(props) {
           recenterY = yPosition - recenterPadding;
         }
   
-        yPosition += card.height + yPadding;
+        yPosition += (card.height || 0) + yPadding;
       }
   
       /*
@@ -257,20 +268,31 @@ export default function Home(props) {
   }
 
   const renderedEdges = [];
-  edges.forEach((edge, idx) => {
-    renderedEdges.push({
-      id: "edge_" + idx,
-      source: edge.source,
-      target: edge.target
+  if (dirty) {
+    setTimeout(() => {
+      const positionCards = [];
+      instance.getNodes().forEach(node => {
+        if (node.id.startsWith('card_')) {
+          positionCards.push({
+            speech: node.data.speech,
+            text: node.data.text,
+            id: node.data.id,
+            height: node.height,
+            width: node.width
+          });
+        }
+      });
+      dispatch(setCards(positionCards));
+    }, 500);
+  } else {
+    edges.forEach((edge, idx) => {
+      renderedEdges.push({
+        id: "edge_" + idx,
+        source: edge.source,
+        target: edge.target
+      });
     });
-  });
-
-  /*
-  console.log(JSON.stringify(edges));
-  console.log(JSON.stringify(cards));
-  console.log(JSON.stringify(clusters));
-  console.log(JSON.stringify(tags));
-  */
+  }
 
   const clusterHeads = {};
   Object.keys(clusters).forEach(key => {
@@ -305,15 +327,6 @@ export default function Home(props) {
     console.log('init', speeches);
     window.instance = instance;
   
-    const positionCards = [];
-    instance.getNodes().forEach(node => {
-      if (node.id.startsWith('card_')) {
-        const speech = speeches[node.id.split('_')[1]];
-        positionCards.push({ speech, text: node.data.text, height: node.height, width: node.width });
-      }
-    });
-    // console.log(JSON.stringify(positionCards));
-
     speeches.forEach(speech => {
       const tag = `Winner: ${speech}`
       if (Object.keys(tags).indexOf(tag) === -1) {
@@ -324,6 +337,9 @@ export default function Home(props) {
 
   const onNodeClick = (event, node) => {
     console.log(node.id);
+    if (!editingMode) {
+      return;
+    }
     if (node.id !== null && node.id !== cursorCellId) {
       console.log('dispatching');
       dispatch(setSelectedNode(node.id));
@@ -337,6 +353,7 @@ export default function Home(props) {
     dispatch(addEdge({ source: event.source, target: event.target }));
   }
   
+  console.log('rendered nodes', renderedNodes);
   return (
     <div>
       <Helmet>

@@ -130,14 +130,20 @@ h1 {
 }
 
 .react-flow__handle {
-  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0);
   border-radius: 0;
-  width: 100%;
+  width: 50px;
+  height: 20px;
+  border: none;
 }
 
-.react-flow__handle:hover {
+.edit-handle:hover {
   animation: fadeIn 1s;
   background-color: #000;
+}
+
+.noedit-handle {
+  cursor: initial !important;
 }
 
 h2 {
