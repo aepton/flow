@@ -343,7 +343,7 @@ export default function Home(props) {
         <title>Flow: {title}</title>
       </Helmet>
       <TopNav speeches={speeches} columnWidth={columnWidth} columnPadding={columnPadding} />
-      <div style={{ width: "100vw", height: "100vh", paddingTop: '6rem' }}>
+      <div style={{ width: "100vw", height: "100vh", paddingTop: '1rem' }}>
         <ReactFlow
           nodes={renderedNodes}
           edges={renderedEdges}
