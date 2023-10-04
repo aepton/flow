@@ -1,5 +1,6 @@
 import * as React from "react";
 
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from "react-redux";
 import {
   addCard,
@@ -14,6 +15,7 @@ import {
   moveLeft,
   moveRight,
   removeTagFromItem,
+  setCards,
   setInstance,
   setSelectedNode,
   setSelectedTags,
@@ -34,7 +36,7 @@ import HighlightedCardNode from "../components/highlightedCardNode";
 import SpeechLabelNode from "../components/speechLabelNode";
 import TextEntryNode from "../components/textEntryNode";
 
-import dataUrl from '../data/37th_debate_height.json';
+import dataLoader from "../components/dataLoader";
 
 window.instance = {};
 
@@ -158,12 +160,22 @@ export default function Home(props) {
     console.log('whoo');
   }
 
+  useEffect(() => {
+    console.log('using effect');
+    dataLoader(c => dispatch(setCards(c)));
+    return () => {};
+  }, [dispatch]);
+
+  console.log('got cards', cards);
+
   const speeches = [];
-  cards.forEach((card, cardIdx) => {
-    if (speeches.indexOf(card.speech) == -1) {
-      speeches.push(card.speech);
-    }
-  });
+  if (cards.forEach) {
+    cards.forEach((card, cardIdx) => {
+      if (speeches.indexOf(card.speech) == -1) {
+        speeches.push(card.speech);
+      }
+    });
+  }
 
   const columnPadding = 50;
   const columnWidth = (window.innerWidth - (columnPadding * (speeches.length - 1))) / speeches.length;
@@ -189,77 +201,79 @@ export default function Home(props) {
   let recenterY = -1;
   let activeNode = null;
   const allTags = Object.keys(tags);
-  cards.forEach((card, cardIdx) => {
-    const speechIdx = speeches.indexOf(card.speech);
-    const cardId = `card_${card.id}`;
-
-    const clusterId = clusters[cardId];
-
-    const active = cursorCellId == cardId;
-
-    const cardTags = [];
-    allTags.forEach(key => {
-      if (tags[key].indexOf(clusterId) != -1) {
-        cardTags.push(key);
-      }
-    });
-    let isSelectedTag = false;
-    if (selectedTags.length === 0) {
-      isSelectedTag = true;
-    } else {
-      isSelectedTag = true;
-      selectedTags.forEach(tag => {
-        if (tags[tag].indexOf(clusterId) === -1) {
-          isSelectedTag = false;
+  if (cards.forEach) {
+    cards.forEach((card, cardIdx) => {
+      const speechIdx = speeches.indexOf(card.speech);
+      const cardId = `card_${card.id}`;
+  
+      const clusterId = clusters[cardId];
+  
+      const active = cursorCellId == cardId;
+  
+      const cardTags = [];
+      allTags.forEach(key => {
+        if (tags[key].indexOf(clusterId) != -1) {
+          cardTags.push(key);
         }
       });
-    }
-
-    if (isSelectedTag) {
-      const node = {
-        id: cardId,
-        position: { x: columnWidth * speechIdx + (columnPadding * speechIdx + 1), y: yPosition },
-        data: {
-          text: card.text,
-          active,
-          sourceHandle: true,
-          targetHandle: true,
-          id: card.id,
-          tags: cardTags,
-          allTags,
-          addTag: tag => dispatch(addItemToTag({ item: clusterId, tag})),
-          removeTag: tag => dispatch(removeTagFromItem({ item: clusterId, tag})),
-          createTag: tag => dispatch(createTag(tag))
-        },
-        type: 'argument',
-        style: {width: columnWidth}
-      };
-
-      if (active) {
-        activeNode = node;
-        yPosition += yPadding * 10;
+      let isSelectedTag = false;
+      if (selectedTags.length === 0) {
+        isSelectedTag = true;
       } else {
-        renderedNodes.push(node);
+        isSelectedTag = true;
+        selectedTags.forEach(tag => {
+          if (tags[tag].indexOf(clusterId) === -1) {
+            isSelectedTag = false;
+          }
+        });
       }
-
-      if (shouldCenterOnActive && active) {
-        recenterY = yPosition - recenterPadding;
+  
+      if (isSelectedTag) {
+        const node = {
+          id: cardId,
+          position: { x: columnWidth * speechIdx + (columnPadding * speechIdx + 1), y: yPosition },
+          data: {
+            text: card.text,
+            active,
+            sourceHandle: true,
+            targetHandle: true,
+            id: card.id,
+            tags: cardTags,
+            allTags,
+            addTag: tag => dispatch(addItemToTag({ item: clusterId, tag})),
+            removeTag: tag => dispatch(removeTagFromItem({ item: clusterId, tag})),
+            createTag: tag => dispatch(createTag(tag))
+          },
+          type: 'argument',
+          style: {width: columnWidth}
+        };
+  
+        if (active) {
+          activeNode = node;
+          yPosition += yPadding * 10;
+        } else {
+          renderedNodes.push(node);
+        }
+  
+        if (shouldCenterOnActive && active) {
+          recenterY = yPosition - recenterPadding;
+        }
+  
+        yPosition += card.height + yPadding;
       }
-
-      yPosition += card.height + yPadding;
-    }
-
-    /*
-    if (speechIdx == cursorSpeechId && cursorCellId == speech.length) {
-      renderedNodes.push({
-        id: "card-entry-" + speechIdx,
-        position: { x: 200 * speechIdx + 37, y: 100 * (speech.length + 1.2) },
-        type: 'textEntry',
-        // style: { border: 'none' },
-      }); 
-    }
-    */
-  });
+  
+      /*
+      if (speechIdx == cursorSpeechId && cursorCellId == speech.length) {
+        renderedNodes.push({
+          id: "card-entry-" + speechIdx,
+          position: { x: 200 * speechIdx + 37, y: 100 * (speech.length + 1.2) },
+          type: 'textEntry',
+          // style: { border: 'none' },
+        }); 
+      }
+      */
+    });
+  }
 
   if (activeNode) {
     renderedNodes.push(activeNode);
