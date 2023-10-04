@@ -28,13 +28,12 @@ import {
 import ReactFlow, { Panel } from 'reactflow';
 import {Helmet} from "react-helmet-async";
 
-import Multiselect from "react-widgets/Multiselect";
-
 import BasicCardNode from "../components/basicCardNode";
 import ArgumentNode from "../components/argumentNode";
 import HighlightedCardNode from "../components/highlightedCardNode";
 import SpeechLabelNode from "../components/speechLabelNode";
 import TextEntryNode from "../components/textEntryNode";
+import TopNav from "../components/topNav";
 
 import dataLoader from "../components/dataLoader";
 
@@ -368,44 +367,13 @@ export default function Home(props) {
   const onConnect = (event) => {
     dispatch(addEdge({ source: event.source, target: event.target }));
   }
-
-  const onSetSelectedTags = (event) => {
-    console.log(event);
-    dispatch(setSelectedTags(event));
-  }
-
-  const speechNav = [];
-  speeches.forEach((speech, idx) => {
-    speechNav.push(
-      <span
-        style={{ left: columnWidth * idx + (columnPadding * idx + 1), width: columnWidth }}
-        className="speechLabel"
-      >
-        {speech}
-      </span>
-    );
-  });
   
   return (
     <div>
       <Helmet>
         <title>Flow: {title}</title>
       </Helmet>
-      <div id="speakers">
-        <div id="header">
-          <h2 id="debateTitle">{title}</h2>
-          <span id="debateAbout" dangerouslySetInnerHTML={{__html: meta}} />
-          <span id="tagSelect">
-            <Multiselect
-              data={allTags}
-              placeholder="filter tags"
-              value={selectedTags}
-              onChange={onSetSelectedTags}
-            />
-          </span>
-        </div>
-        {speechNav}
-      </div>
+      <TopNav speeches={speeches} columnWidth={columnWidth} columnPadding={columnPadding} />
       <div style={{ width: "100vw", height: "100vh" }}>
         <ReactFlow
           nodes={renderedNodes}
