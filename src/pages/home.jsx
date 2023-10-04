@@ -161,7 +161,6 @@ export default function Home(props) {
   }
 
   useEffect(() => {
-    console.log('using effect');
     dataLoader(c => dispatch(setCards(c)));
     return () => {};
   }, [dispatch]);
