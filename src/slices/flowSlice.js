@@ -6,19 +6,22 @@ export const flowSlice = createSlice({
     cards: [],
     cellId: -1,
     clusters: {},
+    date: null,
     edges: [],
     instance: null,
-    meta: null,
+    moderators: [],
     selectedNode: null,
     selectedTags: [],
     shouldCenterOnActive: false,
+    source: null,
     speeches: ['Speech 1'],
     speechId: 0,
     speechNodes: [],
     speechYPosition: 0,
     status: 'navigating',
     tags: [],
-    title: ''
+    title: '',
+    url: null
   },
   reducers: {
     addCard: (state, action) => {
@@ -119,10 +122,13 @@ export const flowSlice = createSlice({
       console.log('setting state for round', state, action);
 
       state.cards = action.payload.cards;
+      state.date = action.payload.date;
       state.edges = action.payload.edges;
-      state.meta = action.payload.meta;
+      state.moderators = action.payload.moderators;
+      state.source = action.payload.source;
       state.tags = action.payload.tags;
       state.title = action.payload.title;
+      state.url = action.payload.url;
     }
   },
 });

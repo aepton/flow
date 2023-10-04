@@ -24,7 +24,9 @@ function ArgumentNode({ data }) {
         {false && <Handle type="target" position={Position.Top} style={{ background: 'black' }} />}
         {data.sourceHandle && <Handle type="source" position={Position.Bottom} /> }
         {data.targetHandle && <Handle type="target" position={Position.Top} /> }
-        {data.text}
+        <div className="argument-text">
+          {data.text}
+        </div>
         {data.active &&
           <Multiselect
             data={data.allTags}

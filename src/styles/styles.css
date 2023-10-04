@@ -226,7 +226,14 @@ h2 {
   position: absolute;
   text-align: center;
   padding: 10px;
-  z-index: 9999 !important;
+  z-index: 9996 !important;
+  color: #000;
+  font-size: 1rem;
+}
+
+.moderatorSpeech {
+  font-size: 0.9rem;
+  color: #ccc;
 }
 
 #debateTitle {
@@ -235,10 +242,33 @@ h2 {
   margin-right: auto;
   text-align: center;
   margin-top: 0;
+  margin-bottom: 0;
+  display: flex;
+  font-weight: bold;
+  padding-top: 1rem;
+  font-size: 1.2rem;
 }
 
 #speeches {
   height: 2rem;
+}
+
+.argument-text {
+  text-align: left;
+}
+
+#source-tag {
+  vertical-align: super;
+  font-size: xx-small;
+  color: #ccc;
+}
+
+#tagSelect {
+  display: flex;
+}
+
+#header {
+  display: flex;
 }
 
 @keyframes fadeIn {
