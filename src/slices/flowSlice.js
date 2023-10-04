@@ -1,11 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import dataLoader from "../components/dataLoader";
-
 export const flowSlice = createSlice({
   name: "flow",
   initialState: {
-    cards: dataLoader(),
+    cards: [],
     cellId: -1,
     clusters: {},
     edges: [
@@ -65,6 +63,10 @@ export const flowSlice = createSlice({
         state.speeches.push([`Speech ${state.speeches.length + 1}`]); 
         state.cellId = 0;
       }
+    },
+    setCards: (state, action) => {
+      console.log('setting cards', state, JSON.stringify(action));
+      state.cards = action.payload;
     },
     setInstance: (state, action) => {
       console.log('setting instance');
@@ -134,6 +136,7 @@ export const {
   moveLeft,
   moveRight,
   removeTagFromItem,
+  setCards,
   setInstance,
   setSelectedNode,
   setSelectedTags,

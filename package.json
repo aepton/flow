@@ -3,7 +3,7 @@
   "version": "0.0.5",
   "description": "Flow debate rounds",
   "scripts": {
-    "start": "vite build",
+    "start": "vite",
     "build": "vite build",
     "serve": "vite preview"
   },
