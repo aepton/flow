@@ -1,13 +1,7 @@
-export default async (setCards) => {
+export default async (setInitialStateForRound) => {
     const defaultUrl = 'https://flowdebates.sfo3.digitaloceanspaces.com/debates/37_ld_2022.json';
     const response = await fetch(defaultUrl);
     const data = await response.json();
-    const cards = [];
-    data.forEach(card => {
-        if (!card.id) {
-            card.id = self.crypto.randomUUID();
-        }
-        cards.push(card);
-    });
-    setCards(cards);
+
+    setInitialStateForRound(data);
 }

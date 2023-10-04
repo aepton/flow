@@ -8,20 +8,13 @@ import {
   addItemToTag,
   addSpeech,
   createTag,
-  editSpeechTitle,
   escapeStatus,
   moveUp,
   moveDown,
-  moveLeft,
-  moveRight,
   removeTagFromItem,
-  setCards,
-  setInstance,
+  setInitialStateForRound,
   setSelectedNode,
-  setSelectedTags,
   setShouldCenterOnActive,
-  setSpeechNodes,
-  setSpeechYPosition,
   setStatus
 } from "../slices/flowSlice";
 
@@ -38,18 +31,6 @@ import TopNav from "../components/topNav";
 import dataLoader from "../components/dataLoader";
 
 window.instance = {};
-
-function debounce(func, timeout = 5){
-  let timer;
-  return (...args) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => { func.apply(this, args); }, timeout);
-  };
-}
-
-function generateEdgeId(edge) {
-  return `${edge.source} - ${edge.target}`;
-}
 
 function useKeyPress(targetKey) {
   const [keyPressed, setKeyPressed] = React.useState(false);
@@ -122,15 +103,10 @@ const nodeTypes = {
 
 
 export default function Home(props) {
-  const [cardContent, setCardContent] = React.useState("");
-  const [speechContent, setSpeechContent] = React.useState("");
   const cards = useSelector((state) => state.flow.cards);
   const cursorCellId = useSelector((state) => state.flow.cellId);
-  const cursorSpeechId = useSelector((state) => state.flow.speechId);
   const edges = useSelector((state) => state.flow.edges);
-  const meta = useSelector((state) => state.flow.meta);
   const selectedTags = useSelector((state) => state.flow.selectedTags);
-  const speechYPosition = useSelector((state) => state.flow.speechYPosition);
   const shouldCenterOnActive = useSelector((state) => state.flow.shouldCenterOnActive);
   const status = useSelector((state) => state.flow.status);
   const tags = useSelector((state) => state.flow.tags);
@@ -140,31 +116,24 @@ export default function Home(props) {
 
   const downPress = useKeyPress("ArrowDown");
   const upPress = useKeyPress("ArrowUp");
-  const leftPress = useKeyPress("ArrowLeft");
-  const rightPress = useKeyPress("ArrowRight");
-
   const tagShortcut = useKeyPress("t");
 
   if (downPress) {
-    console.log('down');
     if (status == 'navigating' && cards.length > props.selectedCard) {
       props.setSelectedCard(props.selectedCard + 1);
     }
   } else if (upPress) {
-    console.log('up');
     if (status == 'navigating' && props.selectedCard > -1) {
       props.setSelectedCard(props.selectedCard - 1);
     }
   } else if (tagShortcut) {
-    console.log('whoo');
+    console.log('tagging shortcut');
   }
 
   useEffect(() => {
-    dataLoader(c => dispatch(setCards(c)));
+    dataLoader(round => dispatch(setInitialStateForRound(round)));
     return () => {};
   }, [dispatch]);
-
-  console.log('got cards', cards);
 
   const speeches = [];
   if (cards.forEach) {
@@ -388,7 +357,7 @@ export default function Home(props) {
           zoomOnDoubleClick={false}
           panOnScroll={true}
           panOnScrollMode={'vertical'}
-          onMove={debounce((event, viewport) => onMove(event, viewport))}
+          onMove={onMove}
           proOptions={{hideAttribution: true}}
         >
           <Panel position="top-left"></Panel>
