@@ -355,7 +355,7 @@ export default function Home(props) {
     dispatch(addEdge({ source: event.source, target: event.target }));
   }
   
-  console.log('rendered nodes', renderedNodes);
+  console.log('rendered nodes', renderedNodes, yPosition);
   return (
     <div>
       <Helmet>
@@ -363,7 +363,7 @@ export default function Home(props) {
         <link rel="icon" href={faviconUrl} />
       </Helmet>
       <TopNav speeches={speeches} columnWidth={columnWidth} columnPadding={columnPadding} />
-      <div style={{ width: "100vw", height: "5000px", paddingTop: '1rem' }}>
+      <div style={{ width: "100vw", height: `${yPosition}px`, paddingTop: '1rem' }}>
         <ReactFlow
           nodes={renderedNodes}
           edges={renderedEdges}
