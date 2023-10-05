@@ -31,6 +31,8 @@ import TopNav from "../components/topNav";
 
 import dataLoader from "../components/dataLoader";
 
+import faviconUrl from "../../favicon.ico";
+
 window.instance = {};
 
 function useKeyPress(targetKey) {
@@ -358,6 +360,7 @@ export default function Home(props) {
     <div>
       <Helmet>
         <title>Flow: {title}</title>
+        <link rel="icon" href={faviconUrl} />
       </Helmet>
       <TopNav speeches={speeches} columnWidth={columnWidth} columnPadding={columnPadding} />
       <div style={{ width: "100vw", height: "5000px", paddingTop: '1rem' }}>
