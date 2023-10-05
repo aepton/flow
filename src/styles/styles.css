@@ -249,7 +249,6 @@ h2 {
   text-align: center;
   margin-top: 0;
   margin-bottom: 0;
-  display: flex;
   font-weight: bold;
   padding-top: 1rem;
   font-size: 1.2rem;
@@ -264,9 +263,8 @@ h2 {
 }
 
 #source-tag {
-  vertical-align: super;
-  font-size: xx-small;
-  color: #ccc;
+  font-size: small;
+  font-variant: small-caps;
 }
 
 #tagSelect {
@@ -275,6 +273,10 @@ h2 {
 
 #header {
   display: flex;
+}
+
+#logo {
+  height: 60px;
 }
 
 @keyframes fadeIn {

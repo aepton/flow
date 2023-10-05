@@ -360,7 +360,7 @@ export default function Home(props) {
         <title>Flow: {title}</title>
       </Helmet>
       <TopNav speeches={speeches} columnWidth={columnWidth} columnPadding={columnPadding} />
-      <div style={{ width: "100vw", height: "100vh", paddingTop: '1rem' }}>
+      <div style={{ width: "100vw", height: "5000px", paddingTop: '1rem' }}>
         <ReactFlow
           nodes={renderedNodes}
           edges={renderedEdges}
@@ -369,10 +369,11 @@ export default function Home(props) {
           onConnect={onConnect}
           onInit={onInit}
           onNodeClick={onNodeClick}
-          onlyRenderVisibleElements={true}
+          onlyRenderVisibleElements={false}
+          preventScrolling={false}
           zoomOnScroll={false}
           zoomOnDoubleClick={false}
-          panOnScroll={true}
+          panOnScroll={false}
           panOnScrollMode={'vertical'}
           onMove={onMove}
           proOptions={{hideAttribution: true}}
