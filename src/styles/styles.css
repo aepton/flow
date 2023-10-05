@@ -181,6 +181,11 @@ h2 {
   text-align: center;
   padding: 10px;
   z-index: 999 !important;
+  user-select: text;
+}
+
+.argument-text {
+  cursor: text;
 }
 
 .active-node {
@@ -288,7 +293,7 @@ h2 {
   top: 10%;
   left: 10%;
   background: #fff;
-  z-index: 9999 !important;
+  z-index: 9999;
   animation: fadeIn 0.5s;
   padding: 10%;
   box-shadow: 5px 5px 5px #ccc;
@@ -299,6 +304,8 @@ h2 {
 .hidden {
   animation: fadeOut 0.5s !important;
   opacity: 0 !important;
+  z-index: -1 !important;
+  pointer-events: none !important;
 }
 
 @keyframes fadeIn {

@@ -381,6 +381,9 @@ export default function Home(props) {
           onMove={onMove}
           proOptions={{hideAttribution: true}}
           panOnDrag={false}
+          nodesDraggable={false}
+          nodesConnectable={false}
+          nodesFocusable={false}
         >
           <Panel position="top-left"></Panel>
         </ReactFlow>
