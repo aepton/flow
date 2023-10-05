@@ -4,7 +4,9 @@ import { useSelector, useDispatch } from "react-redux";
 
 import Multiselect from "react-widgets/Multiselect";
 
-import { setSelectedTags } from "../slices/flowSlice";
+import { toggleFlyoutOpen, setSelectedTags } from "../slices/flowSlice";
+
+import Flyout from "./flyout";
 
 import logoUrl from "../../logo.png";
 
@@ -41,10 +43,15 @@ export default function TopNav(props) {
         dispatch(setSelectedTags(event));
       }
 
+    const toggleFlyout = () => {
+        dispatch(toggleFlyoutOpen());
+    }
+
     return (
         <div id="speakers">
+            <Flyout />
             <div id="header">
-                <img src={logoUrl} id="logo" />
+                <img src={logoUrl} id="logo" onClick={toggleFlyout} />
                 <div id="debateTitle">
                     {title}<br />
                     <a href={url} id="source-tag">{source}, {date}</a>

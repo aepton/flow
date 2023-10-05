@@ -277,9 +277,36 @@ h2 {
 
 #logo {
   height: 60px;
+  position: fixed;
+  top: 0;
+}
+
+#flyout {
+  height: 80%;
+  width: 80%;
+  position: fixed;
+  top: 10%;
+  left: 10%;
+  background: #fff;
+  z-index: 9999 !important;
+  animation: fadeIn 0.1s;
+  padding: 10%;
+  box-shadow: 5px 5px 5px #ccc;
+  border: 1px solid #ccc;
+}
+
+.hidden {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s 2s, opacity 2s linear;
 }
 
 @keyframes fadeIn {
   0% { opacity: 0; }
   100% { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
 }

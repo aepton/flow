@@ -9,6 +9,7 @@ export const flowSlice = createSlice({
     date: null,
     edges: [],
     editingMode: false,
+    flyoutOpen: false,
     instance: null,
     moderators: [],
     selectedNode: null,
@@ -130,6 +131,9 @@ export const flowSlice = createSlice({
       state.tags = action.payload.tags;
       state.title = action.payload.title;
       state.url = action.payload.url;
+    },
+    toggleFlyoutOpen: (state) => {
+      state.flyoutOpen = !state.flyoutOpen;
     }
   },
 });
@@ -156,7 +160,8 @@ export const {
   setShouldCenterOnActive,
   setSpeechNodes,
   setSpeechYPosition,
-  setStatus
+  setStatus,
+  toggleFlyoutOpen
 } = flowSlice.actions;
 
 export default flowSlice.reducer;
