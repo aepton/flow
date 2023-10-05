@@ -380,6 +380,7 @@ export default function Home(props) {
           panOnScrollMode={'vertical'}
           onMove={onMove}
           proOptions={{hideAttribution: true}}
+          panOnDrag={false}
         >
           <Panel position="top-left"></Panel>
         </ReactFlow>

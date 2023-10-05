@@ -289,16 +289,16 @@ h2 {
   left: 10%;
   background: #fff;
   z-index: 9999 !important;
-  animation: fadeIn 0.1s;
+  animation: fadeIn 0.5s;
   padding: 10%;
   box-shadow: 5px 5px 5px #ccc;
   border: 1px solid #ccc;
+  opacity: 1;
 }
 
 .hidden {
-  visibility: hidden;
-  opacity: 0;
-  transition: visibility 0s 2s, opacity 2s linear;
+  animation: fadeOut 0.5s !important;
+  opacity: 0 !important;
 }
 
 @keyframes fadeIn {
