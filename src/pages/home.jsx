@@ -23,7 +23,6 @@ import {
 import ReactFlow, { Panel } from 'reactflow';
 import {Helmet} from "react-helmet-async";
 
-import BasicCardNode from "../components/basicCardNode";
 import ArgumentNode from "../components/argumentNode";
 import HighlightedCardNode from "../components/highlightedCardNode";
 import SpeechLabelNode from "../components/speechLabelNode";
@@ -99,12 +98,10 @@ function onEdgesChange(event) {
 
 const nodeTypes = {
   textEntry: TextEntryNode,
-  basic: BasicCardNode,
   highlighted: HighlightedCardNode,
   speechLabel: SpeechLabelNode,
   argument: ArgumentNode
 };
-
 
 export default function Home(props) {
   const cards = useSelector((state) => state.flow.cards);
@@ -157,9 +154,6 @@ export default function Home(props) {
   const yPadding = 30;
   const recenterPadding = 150;
 
-  const sourceEdges = [];
-  const targetEdges = [];
-
   const clusters = {};
   edges.forEach(edge => {
     if (Object.keys(clusters).indexOf(edge.source) == -1) {
@@ -175,7 +169,7 @@ export default function Home(props) {
   const allTags = Object.keys(tags);
   let dirty = false;
   if (cards.forEach) {
-    cards.forEach((card, cardIdx) => {
+    cards.forEach((card) => {
       const speechIdx = speeches.indexOf(card.speech);
       const cardId = `card_${card.id}`;
   
@@ -189,6 +183,7 @@ export default function Home(props) {
           cardTags.push(key);
         }
       });
+
       let isSelectedTag = false;
       if (selectedTags.length === 0) {
         isSelectedTag = true;
@@ -231,7 +226,7 @@ export default function Home(props) {
   
         if (active) {
           activeNode = node;
-          yPosition += yPadding * 10;
+          yPosition += yPadding * 2;
         } else {
           renderedNodes.push(node);
         }
@@ -243,16 +238,14 @@ export default function Home(props) {
         yPosition += (card.height || 0) + yPadding;
       }
   
-      /*
-      if (speechIdx == cursorSpeechId && cursorCellId == speech.length) {
+      if (editingMode && cursorCellId == cards.length) {
         renderedNodes.push({
           id: "card-entry-" + speechIdx,
-          position: { x: 200 * speechIdx + 37, y: 100 * (speech.length + 1.2) },
+          position: { x: 200 * speechIdx + 37, y: 100 * (cards.length + 1.2) },
           type: 'textEntry',
-          // style: { border: 'none' },
+          style: { border: 'none' },
         }); 
       }
-      */
     });
   }
 
@@ -261,12 +254,6 @@ export default function Home(props) {
   }
 
   if (shouldCenterOnActive && recenterY != -1) {
-    console.log('centering', recenterY);
-    window.instance.setViewport({
-      x: window.instance.getViewport().x,
-      y: recenterY * -1,
-      zoom: window.instance.getZoom()
-    });
     setShouldCenterOnActive(false);
   }
 
@@ -305,46 +292,15 @@ export default function Home(props) {
     clusterHeads[clusters[key]] += 1;
   });
   
-  const renderedSpeeches = [];
-  /*
-  speeches.forEach((speech, idx) => {
-    const isEditing = idx == cursorSpeechId && cursorCellId == -1 && false;
-    renderedNodes.push({
-      id: "speech_" + idx,
-      position: { x: columnWidth * idx + (columnPadding * idx + 1), y: speechYPosition},
-      data: { label: speech, isEditing },
-      type: isEditing ? 'textEntry' : 'speechLabel',
-      style: { width: columnWidth },
-      zIndex: -1
-    });
-  });
-  */
-
-  const onMove = (event, viewport) => {
-    if (viewport.y > 0) {
-      window.instance.setViewport({ x: viewport.x, y: 0, zoom: viewport.zoom });
-    }
-  }
-  
   const onInit = (instance) => {
-    console.log('init', speeches);
     window.instance = instance;
-  
-    speeches.forEach(speech => {
-      const tag = `Winner: ${speech}`
-      if (Object.keys(tags).indexOf(tag) === -1) {
-        dispatch(createTag(tag));
-      }
-    })
   }
 
   const onNodeClick = (event, node) => {
-    console.log(node.id);
     if (!editingMode) {
       return;
     }
     if (node.id !== null && node.id !== cursorCellId) {
-      console.log('dispatching');
       dispatch(setSelectedNode(node.id));
     }
     if (status !== 'node') {
@@ -360,7 +316,6 @@ export default function Home(props) {
     dispatch(closeFlyout());
   }
   
-  console.log('rendered nodes', renderedNodes, yPosition);
   return (
     <div>
       <Helmet>
@@ -383,7 +338,6 @@ export default function Home(props) {
           zoomOnDoubleClick={false}
           panOnScroll={false}
           panOnScrollMode={'vertical'}
-          onMove={onMove}
           proOptions={{hideAttribution: true}}
           panOnDrag={false}
           nodesDraggable={false}

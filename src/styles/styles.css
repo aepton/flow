@@ -190,7 +190,8 @@ h2 {
 
 .active-node {
   box-shadow: 5px 10px 10px #ccc;
-  animation: fadeIn 0.1s; 
+  animation: fadeIn 0.1s;
+  border: 1px solid rgba(204, 204, 204, 0.3);
 }
 
 .selected {
