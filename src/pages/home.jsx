@@ -7,6 +7,7 @@ import {
   addEdge,
   addItemToTag,
   addSpeech,
+  closeFlyout,
   createTag,
   escapeStatus,
   moveUp,
@@ -354,6 +355,10 @@ export default function Home(props) {
   const onConnect = (event) => {
     dispatch(addEdge({ source: event.source, target: event.target }));
   }
+
+  const closeFlyoutEvent = () => {
+    dispatch(closeFlyout());
+  }
   
   console.log('rendered nodes', renderedNodes, yPosition);
   return (
@@ -384,6 +389,7 @@ export default function Home(props) {
           nodesDraggable={false}
           nodesConnectable={false}
           nodesFocusable={false}
+          onClick={closeFlyoutEvent}
         >
           <Panel position="top-left"></Panel>
         </ReactFlow>

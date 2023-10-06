@@ -134,6 +134,14 @@ export const flowSlice = createSlice({
     },
     toggleFlyoutOpen: (state) => {
       state.flyoutOpen = !state.flyoutOpen;
+    },
+    closeFlyout: (state) => {
+      if (state.flyoutOpen) {
+        state.flyoutOpen = false;
+      }
+    },
+    toggleEditingMode: (state) => {
+      state.editingMode = !state.editingMode;
     }
   },
 });
@@ -144,6 +152,7 @@ export const {
   addEdge,
   addItemToTag,
   addSpeech,
+  closeFlyout,
   createTag,
   editSpeechTitle,
   escapeStatus,
@@ -161,7 +170,8 @@ export const {
   setSpeechNodes,
   setSpeechYPosition,
   setStatus,
-  toggleFlyoutOpen
+  toggleFlyoutOpen,
+  toggleEditingMode
 } = flowSlice.actions;
 
 export default flowSlice.reducer;
