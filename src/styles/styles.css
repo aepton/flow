@@ -302,6 +302,10 @@ h2 {
   width: 70%;
 }
 
+main.wrapper {
+  place-items: baseline;
+}
+
 #flyout {
   height: 80%;
   width: 80%;
