@@ -34,14 +34,5 @@
   "browserslist": [
     ">0.2%",
     "not dead"
-  ],
-  "engines": {
-    "node": "14.x"
-  },
-  "repository": {
-    "url": "https://glitch.com/edit/#!/glitch-hello-react"
-  },
-  "glitch": {
-    "projectType": "generated_static"
-  }
+  ]
 }
