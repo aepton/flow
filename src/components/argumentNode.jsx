@@ -33,7 +33,7 @@ function ArgumentNode({ data }) {
             data={data.allTags}
             placeholder="add tags"
             allowCreate
-            autoFocus
+            autoFocus={data.editingMode}
             onChange={onChange}
             value={data.tags}
             onCreate={onCreate}

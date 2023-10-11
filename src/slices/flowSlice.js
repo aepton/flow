@@ -66,7 +66,6 @@ export const flowSlice = createSlice({
       }
     },
     setCards: (state, action) => {
-      console.log('setting cards', state, JSON.stringify(action));
       state.cards = action.payload;
     },
     setInstance: (state, action) => {

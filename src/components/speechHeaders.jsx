@@ -28,8 +28,10 @@ export default function SpeechHeaders(props) {
         dispatch(closeFlyout());
     }
 
+    const width = props.speeches.length * (props.columnWidth + props.columnPadding);
+
     return (
-        <div id="speeches" onClick={closeFlyoutEvent}>
+        <div id="speeches" style={{ width: `${width}px` }} onClick={closeFlyoutEvent}>
             {speechNav}
         </div>
     );

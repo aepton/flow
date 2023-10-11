@@ -175,13 +175,13 @@ export default function Home(props) {
   const allTags = Object.keys(tags);
   let dirty = false;
   if (cards.forEach) {
-    cards.forEach((card) => {
+    cards.forEach((card, idx) => {
       const speechIdx = speeches.indexOf(card.speech);
       const cardId = `card_${card.id}`;
   
       const clusterId = clusters[cardId];
   
-      const active = cursorCellId == cardId;
+      const active = cursorCellId == idx;
   
       const cardTags = [];
       allTags.forEach(key => {
@@ -321,6 +321,8 @@ export default function Home(props) {
   const closeFlyoutEvent = () => {
     dispatch(closeFlyout());
   }
+
+  console.log('rendering', cursorCellId, cards);
   
   return (
     <div>
@@ -359,6 +361,7 @@ export default function Home(props) {
         >
           <Panel position="top-left"></Panel>
         </ReactFlow>
+        <div id="navHelp">↑/↓ navigate</div>
       </div>
     </div>
   );
