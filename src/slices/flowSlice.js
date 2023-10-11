@@ -40,7 +40,7 @@ export const flowSlice = createSlice({
       state.speeches[action.payload.speechId] = action.payload.speechName;
     },
     moveUp: (state) => {
-      console.log('moving up', state);
+      console.log('moving up', JSON.stringify(state));
       if (state.cellId >= 0) {
         state.cellId -= 1;
       }

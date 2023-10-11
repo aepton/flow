@@ -26,6 +26,7 @@ import {Helmet} from "react-helmet-async";
 import ArgumentNode from "../components/argumentNode";
 import HighlightedCardNode from "../components/highlightedCardNode";
 import SpeechLabelNode from "../components/speechLabelNode";
+import SpeechHeaders from "../components/speechHeaders";
 import TextEntryNode from "../components/textEntryNode";
 import TopNav from "../components/topNav";
 
@@ -121,10 +122,12 @@ export default function Home(props) {
   const tagShortcut = useKeyPress("t");
 
   if (downPress) {
+    console.log('down');
     if (status == 'navigating' && cards.length > props.selectedCard) {
       props.setSelectedCard(props.selectedCard + 1);
     }
   } else if (upPress) {
+    console.log('up');
     if (status == 'navigating' && props.selectedCard > -1) {
       props.setSelectedCard(props.selectedCard - 1);
     }
@@ -147,7 +150,10 @@ export default function Home(props) {
   }
 
   const columnPadding = 50;
-  const columnWidth = (window.innerWidth - (columnPadding * (speeches.length - 1))) / speeches.length;
+  const columnWidth = Math.max(
+    (window.innerWidth - (columnPadding * (speeches.length - 1))) / speeches.length,
+    window.innerWidth / 2.5
+  );
 
   const renderedNodes = [];
   let yPosition = 0;
@@ -322,8 +328,14 @@ export default function Home(props) {
         <title>Flow: {title}</title>
         <link rel="icon" href={faviconUrl} />
       </Helmet>
-      <TopNav speeches={speeches} columnWidth={columnWidth} columnPadding={columnPadding} />
-      <div style={{ width: "100vw", height: `${yPosition}px`, paddingTop: '1rem' }}>
+      <TopNav  />
+      <SpeechHeaders speeches={speeches} columnWidth={columnWidth} columnPadding={columnPadding} />
+      <div
+        id="flowCanvas"
+        style={{
+          width: `${columnWidth * speeches.length}px`,
+          height: `${yPosition}px`
+        }}>
         <ReactFlow
           nodes={renderedNodes}
           edges={renderedEdges}

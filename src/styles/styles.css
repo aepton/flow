@@ -232,10 +232,9 @@ h2 {
 
 #speakers {
   width: 100%;
-  position: sticky;
+  position: fixed;
   top: 0;
   left: 0;
-  box-shadow: 5px 5px 10px #ccc;
   z-index: 9999 !important;
   background: #fff;
 }
@@ -272,6 +271,17 @@ h2 {
 
 #speeches {
   height: 2rem;
+  position: sticky;
+  top: 64px;
+  left: 0px;
+  box-shadow: 5px 10px 10px #ccc;
+  z-index: 9999 !important;
+  background: #fff;
+}
+
+#flowCanvas {
+  padding-top: 1rem;
+  top: 75px;
 }
 
 .argument-text {
