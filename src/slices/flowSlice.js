@@ -65,6 +65,11 @@ export const flowSlice = createSlice({
         state.cellId = 0;
       }
     },
+    removeEdge: (state, action) => {
+      state.edges = state.edges.filter(
+        edge => edge.source !== action.payload.source && edge.target !== action.payload.target
+      );
+    },
     setCards: (state, action) => {
       state.cards = action.payload;
     },
@@ -159,6 +164,7 @@ export const {
   moveDown,
   moveLeft,
   moveRight,
+  removeEdge,
   removeTagFromItem,
   setCards,
   setInitialStateForRound,

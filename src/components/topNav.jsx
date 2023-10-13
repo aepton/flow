@@ -11,6 +11,7 @@ import Flyout from "./flyout";
 
 import logoUrl from "../../logo.png";
 import pencilUrl from "../../pencil.svg";
+import downloadUrl from "../../download.svg";
 
 export default function TopNav() {
     const date = useSelector((state) => state.flow.date);
@@ -67,6 +68,9 @@ export default function TopNav() {
                                         onChange={toggleEditing}
                                     />
                                 </label>
+                                {editingMode &&
+                                    <img src={downloadUrl} id="download" />
+                                }
                             </div>
                             <div id="tagSelect" onClick={closeFlyoutEvent}>
                                 <Multiselect

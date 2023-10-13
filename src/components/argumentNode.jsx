@@ -17,6 +17,20 @@ function ArgumentNode({ data }) {
     data.addTag(tag);
   });
 
+  const autofocusInput = useCallback((inputElement) => {
+    if (inputElement) {
+      setTimeout(x => {
+        const range = document.createRange();
+        range.selectNodeContents(inputElement);
+        range.collapse(false);
+
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }, 100);
+    }
+  }, []);
+
   let className = `argument-node ${data.active ? 'active-node' : ''}`;
   let handleClass = data.editingMode ? 'edit-handle' : 'noedit-handle';
 
@@ -25,19 +39,31 @@ function ArgumentNode({ data }) {
         {false && <Handle type="target" position={Position.Top} style={{ background: 'black' }} />}
         {data.sourceHandle && <Handle type="source" position={Position.Bottom} className={handleClass} /> }
         {data.targetHandle && <Handle type="target" position={Position.Top} className={handleClass} /> }
-        <div className="argument-text">
-          {data.text}
-        </div>
-        {data.active &&
-          <Multiselect
-            data={data.allTags}
-            placeholder="add tags"
-            allowCreate
-            autoFocus={data.editingMode}
-            onChange={onChange}
-            value={data.tags}
-            onCreate={onCreate}
-          />
+        {data.active && data.editingMode &&
+          <div>
+            <div className="text-entry-node" contentEditable ref={autofocusInput}>
+              {data.text}
+            </div>
+            <Multiselect
+              data={data.allTags}
+              placeholder="add tags"
+              allowCreate
+              autoFocus={data.editingMode}
+              onChange={onChange}
+              value={data.tags}
+              onCreate={onCreate}
+            />
+          </div>
+        }
+        {(!data.active || !data.editingMode) &&
+          <div>
+            <div className="argument-text">
+              {data.text}
+            </div>
+            <div className="argument-tags">
+              {data.tags.join('; ')}
+            </div>
+          </div>
         }
     </div>
   );

@@ -12,6 +12,7 @@ import {
   escapeStatus,
   moveUp,
   moveDown,
+  removeEdge,
   removeTagFromItem,
   setInitialStateForRound,
   setSelectedNode,
@@ -303,14 +304,26 @@ export default function Home(props) {
   }
 
   const onNodeClick = (event, node) => {
-    if (!editingMode) {
-      return;
-    }
-    if (node.id !== null && node.id !== cursorCellId) {
-      dispatch(setSelectedNode(node.id));
+    let nodeIdx = -1;
+    cards.forEach((card, cardIdx) => {
+      const tempId = `card_${card.id}`;
+      if (tempId === node.id) {
+        nodeIdx = cardIdx;
+      }
+    });
+
+    if (nodeIdx !== -1 && nodeIdx !== cursorCellId) {
+      dispatch(setSelectedNode(nodeIdx));
     }
     if (status !== 'node') {
       dispatch(setStatus('node'));
+    }
+  }
+
+  const onEdgeClick = (event, edge) => {
+    if (editingMode) {
+      console.log('edge click', event, edge);
+      dispatch(removeEdge(edge));
     }
   }
 
@@ -346,6 +359,7 @@ export default function Home(props) {
           onConnect={onConnect}
           onInit={onInit}
           onNodeClick={onNodeClick}
+          onEdgeClick={onEdgeClick}
           onlyRenderVisibleElements={false}
           preventScrolling={false}
           zoomOnScroll={false}
