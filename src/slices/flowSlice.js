@@ -36,17 +36,27 @@ export const flowSlice = createSlice({
     addSpeech: (state, action) => {
       state.speeches.push(action.payload);
     },
+    editCardText: (state, action) => {
+      let idx = -1;
+      console.log(action);
+      state.cards.forEach((card, cardIdx) => {
+        if (card.id === action.payload.id) {
+          idx = cardIdx;
+        }
+      });
+      if (idx !== -1) {
+        state.cards[idx].text = action.payload.text;
+      }
+    },
     editSpeechTitle: (state, action) => {
       state.speeches[action.payload.speechId] = action.payload.speechName;
     },
     moveUp: (state) => {
-      console.log('moving up', JSON.stringify(state));
       if (state.cellId >= 0) {
         state.cellId -= 1;
       }
     },
     moveDown: (state) => {
-      console.log('moving down', state.cards.length, state.cellId);
       if (state.cards.length > state.cellId) {
         state.cellId += 1;
         state.shouldCenterOnActive = true;
@@ -98,7 +108,8 @@ export const flowSlice = createSlice({
       state.setShouldCenterOnActive = action.payload;
     },
     setStatus: (state, action) => {
-      console.log('setting status');
+      console.log('setting status', action.payload);
+      window.status = action.payload;
       state.status = action.payload;
     },
     escapeStatus: (state) => {
@@ -158,6 +169,7 @@ export const {
   addSpeech,
   closeFlyout,
   createTag,
+  editCardText,
   editSpeechTitle,
   escapeStatus,
   moveUp,

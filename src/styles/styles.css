@@ -200,6 +200,17 @@ h2 {
   z-index: 9999 !important;
 }
 
+#download {
+  height: 1.5rem;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  display: inline-block;
+  position: relative;
+  left: 15px;
+  cursor: pointer;
+}
+
 #cursor-position {
   position: fixed;
   top: 10px;

@@ -57,9 +57,10 @@ function ArgumentNode({ data }) {
         }
         {(!data.active || !data.editingMode) &&
           <div>
-            <div className="argument-text">
-              {data.text}
-            </div>
+            <div
+              className="argument-text"
+              dangerouslySetInnerHTML={{__html: window.showdown.makeHtml(data.text)}}
+            />
             <div className="argument-tags">
               {data.tags.join('; ')}
             </div>

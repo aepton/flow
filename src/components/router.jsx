@@ -17,6 +17,15 @@ export default () => {
           setSelectedCard={setSelectedCard}
         />
       </Route>
+      <Route path="/:round">
+        {(params) => 
+          <Home
+            selectedCard={selectedCard}
+            setSelectedCard={setSelectedCard}
+            round={params.round}
+          />
+        }
+      </Route>
       <Route path="/about" component={About} />
     </Switch>
   );

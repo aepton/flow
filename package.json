@@ -23,6 +23,7 @@
     "react-widgets": "^5.8.4",
     "reactflow": "^11.7.0",
     "redux": "^4.2.0",
+    "showdown": "^2.1.0",
     "wouter": "^2.9.0"
   },
   "devDependencies": {

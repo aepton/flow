@@ -9,6 +9,7 @@ import {
   addSpeech,
   closeFlyout,
   createTag,
+  editCardText,
   escapeStatus,
   moveUp,
   moveDown,
@@ -23,6 +24,8 @@ import {
 
 import ReactFlow, { Panel } from 'reactflow';
 import {Helmet} from "react-helmet-async";
+
+import { Converter } from 'showdown';
 
 import ArgumentNode from "../components/argumentNode";
 import HighlightedCardNode from "../components/highlightedCardNode";
@@ -42,16 +45,30 @@ function useKeyPress(targetKey) {
   const dispatch = useDispatch();
 
   function moveHandler({ key }) {
+    console.log(key);
     if (key === targetKey) {
       if (targetKey === "ArrowDown") {
-        dispatch(moveDown());
+        console.log('down', window.status);
+        if (window.status === 'navigating') {
+          dispatch(moveDown());
+        }
       } else if (targetKey === "ArrowUp") {
-        dispatch(moveUp());
+        if (window.status === 'navigating') {
+          dispatch(moveUp());
+        }
       } else if (targetKey === "t") {
         console.log('tagging');
         dispatch(setStatus('tagging'));
       } else if (targetKey === "Escape") {
         dispatch(escapeStatus());
+      } else if (targetKey === "Enter") {
+        if (window.status === 'node') {
+          const text = document.getElementsByClassName('text-entry-node')[0].innerText;
+          const id = document.getElementsByClassName(
+            'text-entry-node'
+          )[0].parentElement.parentElement.parentElement.getAttribute('data-id').split('card_')[1];
+          dispatch(editCardText({ id, text }));
+        }
       }
     }
   }
@@ -120,6 +137,7 @@ export default function Home(props) {
 
   const downPress = useKeyPress("ArrowDown");
   const upPress = useKeyPress("ArrowUp");
+  const enterPress = useKeyPress("Enter");
   const tagShortcut = useKeyPress("t");
 
   if (downPress) {
@@ -137,7 +155,7 @@ export default function Home(props) {
   }
 
   useEffect(() => {
-    dataLoader(round => dispatch(setInitialStateForRound(round)));
+    dataLoader(props.round, round => dispatch(setInitialStateForRound(round)));
     return () => {};
   }, [dispatch]);
 
@@ -301,6 +319,10 @@ export default function Home(props) {
   
   const onInit = (instance) => {
     window.instance = instance;
+
+    window.showdown = new Converter();
+
+    window.status = 'navigating';
   }
 
   const onNodeClick = (event, node) => {

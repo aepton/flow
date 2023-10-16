@@ -14,6 +14,7 @@ import pencilUrl from "../../pencil.svg";
 import downloadUrl from "../../download.svg";
 
 export default function TopNav() {
+    const flow = useSelector((state) => state.flow);
     const date = useSelector((state) => state.flow.date);
     const editingMode = useSelector((state) => state.flow.editingMode);
     const selectedTags = useSelector((state) => state.flow.selectedTags);
@@ -43,6 +44,16 @@ export default function TopNav() {
         dispatch(closeFlyout());
     }
 
+    const downloadHandler = () => {
+        const blob = new Blob([JSON.stringify(flow)], { type: "text/json" });
+        const jsonObjectUrl = URL.createObjectURL(blob);
+        const filename = "round.json";
+        const anchorEl = document.createElement("a");
+        anchorEl.href = jsonObjectUrl;
+        anchorEl.download = filename;
+        anchorEl.click();
+    }
+
     return (
         <div>
             <div>
@@ -69,7 +80,7 @@ export default function TopNav() {
                                     />
                                 </label>
                                 {editingMode &&
-                                    <img src={downloadUrl} id="download" />
+                                    <img src={downloadUrl} id="download" onClick={downloadHandler} />
                                 }
                             </div>
                             <div id="tagSelect" onClick={closeFlyoutEvent}>
