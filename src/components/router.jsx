@@ -1,32 +1,19 @@
 import * as React from "react";
-import { Switch, Route, Router } from "wouter";
+import { Switch, Route, useLocation, useParams } from "wouter";
 import Home from "../pages/home";
-import About from "../pages/about";
-
-/**
-* The router is imported in app.jsx
-*/
 
 export default () => {
-  const [selectedCard, setSelectedCard] = React.useState(0);
+  const [location, setLocation] = useLocation();
+  console.log('location', location);
+
+  const params = useParams();
+  console.log('params', params);
+
   return (
     <Switch>
-      <Route path="/">
-        <Home
-          selectedCard={selectedCard}
-          setSelectedCard={setSelectedCard}
-        />
+      <Route>
+        <Home />
       </Route>
-      <Route path="/:round">
-        {(params) => 
-          <Home
-            selectedCard={selectedCard}
-            setSelectedCard={setSelectedCard}
-            round={params.round}
-          />
-        }
-      </Route>
-      <Route path="/about" component={About} />
     </Switch>
   );
 }
