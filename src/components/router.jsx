@@ -1,18 +1,14 @@
 import * as React from "react";
-import { Switch, Route, useLocation, useParams } from "wouter";
+import { Switch, Route } from "wouter";
 import Home from "../pages/home";
 
 export default () => {
-  const [location, setLocation] = useLocation();
-  console.log('location', location);
-
-  const params = useParams();
-  console.log('params', params);
+  const params = new URLSearchParams(window.location.search);
 
   return (
     <Switch>
       <Route>
-        <Home />
+        <Home round={params.get('round')} />
       </Route>
     </Switch>
   );
