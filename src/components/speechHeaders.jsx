@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { closeFlyout } from "../slices/flowSlice";
 
 export default function SpeechHeaders(props) {
+    const editing = useSelector((state) => state.flow.editingMode);
     const moderators = useSelector((state) => state.flow.moderators);
 
     const speechNav = [];
@@ -16,6 +17,7 @@ export default function SpeechHeaders(props) {
                     width: props.columnWidth
                 }}
                 className={`speechLabel ${moderators.indexOf(speech) !== -1 ? 'moderatorSpeech' : ''}`}
+                contentEditable={editing}
             >
             {speech}{moderators.indexOf(speech) !== -1 ? ' (moderator)' : ''}
         </span>

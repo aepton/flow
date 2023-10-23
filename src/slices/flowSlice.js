@@ -26,9 +26,21 @@ export const flowSlice = createSlice({
     url: null
   },
   reducers: {
-    addCard: (state, action) => {
-      state.cards[action.payload.speechId].push(action.payload.card);
-      state.cellId += 1;
+    addCardAfter: (state, action) => {
+      let existingIdx = -1;
+      let existingSpeech = null;
+      state.cards.forEach((card, idx) => {
+        if (card.id === action.payload) {
+          existingIdx = idx;
+          existingSpeech = card.speech;
+        }
+      });
+      if (!existingSpeech) {
+        existingSpeech = state.cards[-1].speech;
+      }
+      const newIdx = existingIdx + 1;
+      state.cards.splice(newIdx, 0, { id: crypto.randomUUID(), speech: existingSpeech, text: '?' });
+      state.cellId = newIdx;
     },
     addEdge: (state, action) => {
       state.edges.push(action.payload);
@@ -80,8 +92,21 @@ export const flowSlice = createSlice({
         edge => edge.source !== action.payload.source && edge.target !== action.payload.target
       );
     },
+    removeCard: (state, action) => {
+      state.cards = state.cards.filter(card => card.id !== action.payload);
+      const edgeId = `card_${action.payload}`;
+      state.edges = state.edges.filter(edge => edge.source !== edgeId || edge.target !== edgeId);
+    },
     setCards: (state, action) => {
       state.cards = action.payload;
+    },
+    setCardHeightWidth: (state, action) => {
+      const positionCards = [];
+      state.cards.forEach(card => {
+        const id = `card_${card.id}`;
+        positionCards.push({ ...card, ...action.payload[id]});
+      });
+      state.cards = positionCards;
     },
     setInstance: (state, action) => {
       console.log('setting instance');
@@ -163,7 +188,7 @@ export const flowSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {
-  addCard,
+  addCardAfter,
   addEdge,
   addItemToTag,
   addSpeech,
@@ -177,8 +202,10 @@ export const {
   moveLeft,
   moveRight,
   removeEdge,
+  removeCard,
   removeTagFromItem,
   setCards,
+  setCardHeightWidth,
   setInitialStateForRound,
   setInstance,
   setSelectedNode,

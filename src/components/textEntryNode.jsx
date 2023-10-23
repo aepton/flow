@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from "react-redux";
 
-import { addCard } from "../slices/flowSlice";
+import { addCardAfter } from "../slices/flowSlice";
 
 
 function TextEntryNode({ data }) {

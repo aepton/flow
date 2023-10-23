@@ -3,7 +3,6 @@ import * as React from "react";
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from "react-redux";
 import {
-  addCard,
   addEdge,
   addItemToTag,
   addSpeech,
@@ -19,7 +18,7 @@ import {
   setSelectedNode,
   setShouldCenterOnActive,
   setStatus,
-  setCards
+  setCardHeightWidth
 } from "../slices/flowSlice";
 
 import ReactFlow, { Panel } from 'reactflow';
@@ -89,7 +88,7 @@ function handleCardContentsEdit(event) {
   if (event.target.value.includes("\n")) {
     const val = event.target.value.replace("\n", "");
     if (val != "") {
-      dispatch(addCard({card: val, speechId: 0}));
+      // dispatch(addCard({card: val, speechId: 0}));
     }
     setCardContent("");
   } else {
@@ -194,6 +193,7 @@ export default function Home(props) {
   const allTags = Object.keys(tags);
   let dirty = false;
   if (cards.forEach) {
+    console.log('rendering', cards);
     cards.forEach((card, idx) => {
       const speechIdx = speeches.indexOf(card.speech);
       const cardId = `card_${card.id}`;
@@ -240,9 +240,11 @@ export default function Home(props) {
             tags: cardTags,
             allTags,
             speech: card.speech,
+            clusterHead: clusters[cardId] === cardId,
             addTag: tag => dispatch(addItemToTag({ item: clusterId, tag})),
             removeTag: tag => dispatch(removeTagFromItem({ item: clusterId, tag})),
-            createTag: tag => dispatch(createTag(tag))
+            createTag: tag => dispatch(createTag(tag)),
+            nodeIdx: idx
           },
           selectable: editingMode,
           type: 'argument',
@@ -284,20 +286,16 @@ export default function Home(props) {
 
   const renderedEdges = [];
   if (dirty) {
+    console.log('dirty!!!!!');
     setTimeout(() => {
-      const positionCards = [];
+      const info = {};
       instance.getNodes().forEach(node => {
         if (node.id.startsWith('card_')) {
-          positionCards.push({
-            speech: node.data.speech,
-            text: node.data.text,
-            id: node.data.id,
-            height: node.height,
-            width: node.width
-          });
+          info[node.id] = {height: node.height, width: node.width};
         }
       });
-      dispatch(setCards(positionCards));
+      console.log('setting', info);
+      dispatch(setCardHeightWidth(info));
     }, 500);
   } else {
     edges.forEach((edge, idx) => {
@@ -334,12 +332,14 @@ export default function Home(props) {
       }
     });
 
+    /*
     if (nodeIdx !== -1 && nodeIdx !== cursorCellId) {
       dispatch(setSelectedNode(nodeIdx));
     }
     if (status !== 'node') {
       dispatch(setStatus('node'));
     }
+    */
   }
 
   const onEdgeClick = (event, edge) => {
