@@ -17,7 +17,6 @@ import {
   setInitialStateForRound,
   setSelectedNode,
   setShouldCenterOnActive,
-  setStatus,
   setCardHeightWidth
 } from "../slices/flowSlice";
 
@@ -57,7 +56,7 @@ function useKeyPress(targetKey) {
         }
       } else if (targetKey === "t") {
         console.log('tagging');
-        dispatch(setStatus('tagging'));
+        window.status = 'tagging';
       } else if (targetKey === "Escape") {
         dispatch(escapeStatus());
       } else if (targetKey === "Enter") {
@@ -128,6 +127,7 @@ export default function Home(props) {
   const editingMode = useSelector((state) => state.flow.editingMode);
   const selectedTags = useSelector((state) => state.flow.selectedTags);
   const shouldCenterOnActive = useSelector((state) => state.flow.shouldCenterOnActive);
+  const speechSettings = useSelector((state) => state.flow.speeches);
   const status = useSelector((state) => state.flow.status);
   const tags = useSelector((state) => state.flow.tags);
   const title = useSelector((state) => state.flow.title);
@@ -366,7 +366,7 @@ export default function Home(props) {
         <link rel="icon" href={faviconUrl} />
       </Helmet>
       <TopNav  />
-      <SpeechHeaders speeches={speeches} columnWidth={columnWidth} columnPadding={columnPadding} />
+      <SpeechHeaders columnWidth={columnWidth} columnPadding={columnPadding} />
       <div
         id="flowCanvas"
         style={{

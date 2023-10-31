@@ -16,7 +16,7 @@ export const flowSlice = createSlice({
     selectedTags: [],
     shouldCenterOnActive: false,
     source: null,
-    speeches: ['Speech 1'],
+    speeches: [],
     speechId: 0,
     speechNodes: [],
     speechYPosition: 0,
@@ -168,6 +168,7 @@ export const flowSlice = createSlice({
       state.edges = action.payload.edges;
       state.moderators = action.payload.moderators;
       state.source = action.payload.source;
+      state.speeches = action.payload.speeches;
       state.tags = action.payload.tags;
       state.title = action.payload.title;
       state.url = action.payload.url;
@@ -182,6 +183,42 @@ export const flowSlice = createSlice({
     },
     toggleEditingMode: (state) => {
       state.editingMode = !state.editingMode;
+    },
+    moveNodeSpeech: (state, action) => {
+      let idx = -1;
+      let currentSpeech;
+      state.cards.forEach((card, cardIdx) => {
+        if (card.id === action.payload.cardId) {
+          idx = cardIdx;
+          currentSpeech = card.speech;
+        }
+      });
+      if (idx !== -1 && currentSpeech) {
+        let speechIdx = -1;
+        state.speeches.forEach((speech, sIdx) => {
+          if (speech.id === currentSpeech) {
+            speechIdx = sIdx;
+          }
+        });
+        if (speechIdx !== -1) {
+          if (action.payload.direction === 'left') {
+            if (speechIdx > 0) {
+              speechIdx -= 1;
+            } else {
+              speechIdx = state.speeches.length - 1;
+            }
+          } else if (action.payload.direction === 'right') {
+            if (speechIdx < state.speeches.length - 1) {
+              speechIdx += 1;
+            } else {
+              speechIdx = 0;
+            }            
+          }
+
+          console.log('got direction', action, idx, speechIdx, state.cards[idx].speech);
+          state.cards[idx].speech = state.speeches[speechIdx].id;
+        }
+      }
     }
   },
 });
@@ -197,6 +234,7 @@ export const {
   editCardText,
   editSpeechTitle,
   escapeStatus,
+  moveNodeSpeech,
   moveUp,
   moveDown,
   moveLeft,

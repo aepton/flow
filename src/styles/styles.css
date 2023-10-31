@@ -223,21 +223,47 @@ h2 {
 }
 
 .delete-node {
-  position: absolute;
-  right: 0;
   top: 0;
-  cursor: pointer;
-  height: 25px;
-  width: 25px;
+  border-top: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
 }
 
 .add-node {
+  top: 75px;
+  padding: 5px;
+  border-bottom: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+}
+
+.move-left-node {
+  top: 50px;
+  padding: 5px;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+}
+
+.move-right-node {
+  top: 25px;
+  padding: 5px;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+}
+
+.control-node {
   position: absolute;
-  left: 0;
-  bottom: 0;
+  right: -25px;
   cursor: pointer;
-  height: 15px;
-  width: 15px;
+  height: 25px;
+  width: 25px;
+  z-index: 9999;
+  background: white;
+  box-shadow: 2px 2px 5px #ccc;
+}
+
+.control-node:hover {
+  background: rgba(0, 0, 0, 0.25);
 }
 
 .collapse-exchange {
@@ -247,8 +273,12 @@ h2 {
   cursor: pointer;
   height: 15px;
   width: 15px;
-  background-color: lightgrey;
-  border-radius: 10px;
+  border: 1px solid #ccc;
+  box-shadow: 2px 2px 3px #ccc;
+}
+
+.collapse-exchange:hover {
+  background: rgba(0, 0, 0, 0.25);
 }
 
 .rw-multiselect {
@@ -282,7 +312,7 @@ h2 {
 }
 
 #speakers.editing {
-  background: #c0f2bd;
+  background: rgba(255, 255, 255, 0.8);
 }
 
 .speechLabel {

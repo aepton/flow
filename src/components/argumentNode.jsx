@@ -4,10 +4,12 @@ import Multiselect from "react-widgets/Multiselect";
 
 import { useDispatch } from "react-redux";
 
-import { addCardAfter, removeCard, setSelectedNode } from "../slices/flowSlice";
+import { addCardAfter, moveNodeSpeech, removeCard, setSelectedNode } from "../slices/flowSlice";
 
+import leftUrl from "../../left.svg";
 import minusUrl from "../../minus.svg";
 import plusUrl from "../../plus.svg";
+import rightUrl from "../../right.svg";
 import trashUrl from "../../trash.svg";
 
 
@@ -38,11 +40,19 @@ function ArgumentNode({ data }) {
 
   const onClick = () => {
     dispatch(setSelectedNode(data.nodeIdx));
-    dispatch(setStatus('node'));
+    window.status = 'node';
   }
 
   const collapseExchange = () => {
     console.log('collapse exchange');
+  }
+
+  const moveLeft = () => {
+    dispatch(moveNodeSpeech({ cardId: data.id, direction: 'left' }));
+  }
+
+  const moveRight = () => {
+    dispatch(moveNodeSpeech({ cardId: data.id, direction: 'right' }));
   }
 
   const autofocusInput = useCallback((inputElement) => {
@@ -69,8 +79,10 @@ function ArgumentNode({ data }) {
         {data.targetHandle && <Handle type="target" position={Position.Top} className={handleClass} /> }
         {data.editingMode &&
           <div>
-            <img src={trashUrl} className="delete-node" onClick={deleteNode} />
-            <img src={plusUrl} className="add-node" onClick={addNode} />
+            <img src={trashUrl} className="delete-node control-node" onClick={deleteNode} />
+            <img src={rightUrl} className="move-right-node control-node" onClick={moveRight} />
+            <img src={leftUrl} className="move-left-node control-node" onClick={moveLeft} />
+            <img src={plusUrl} className="add-node control-node" onClick={addNode} />
           </div>
         }
         {!data.editingMode && data.clusterHead &&
