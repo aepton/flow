@@ -50,7 +50,6 @@ export const flowSlice = createSlice({
     },
     editCardText: (state, action) => {
       let idx = -1;
-      console.log(action);
       state.cards.forEach((card, cardIdx) => {
         if (card.id === action.payload.id) {
           idx = cardIdx;
@@ -109,60 +108,49 @@ export const flowSlice = createSlice({
       state.cards = positionCards;
     },
     setInstance: (state, action) => {
-      console.log('setting instance');
       state.instance = action.payload;
     },
     setSelectedNode: (state, action) => {
-      console.log('setting selected node', state, action);
       state.cellId = action.payload;
     },
     setSelectedTags: (state, action) => {
-      console.log('setting selected tags', action);
       state.selectedTags = action.payload;
     },
     setSpeechNodes: (state, action) => {
-      console.log('setting speech nodes');
       state.speechNodes = action.payload;
     },
     setSpeechYPosition: (state, action) => {
-      console.log('setting speech y position');
       state.speechYPosition = action.payload;
     },
     setShouldCenterOnActive: (state, action) => {
-      console.log('centering on active?', action.payload);
       state.setShouldCenterOnActive = action.payload;
     },
+    setSpeeches: (state, action) => {
+      state.speeches = action.payload;
+    },
     setStatus: (state, action) => {
-      console.log('setting status', action.payload);
       window.status = action.payload;
       state.status = action.payload;
     },
     escapeStatus: (state) => {
-      console.log('current status', state.status);
       if (state.status === 'tagging') {
         state.status = 'node';
       }
     },
     addItemToTag: (state, action) => {
-      console.log('adding tag', action);
       const { item, tag } = action.payload;
       state.tags[tag].push(item);
     },
     removeTagFromItem: (state, action) => {
-      console.log(state.tags, action.payload.tag, action);
       const { item, tag } = action.payload;
       state.tags[tag].splice(state.tags[tag].indexOf(item));
     },
     createTag: (state, action) => {
-      console.log('creating tag', action.payload);
       if (Object.keys(state.tags).indexOf(action.payload) == -1) {
         state.tags[action.payload] = [];
       }
-      console.log(JSON.stringify(state.tags));
     },
     setInitialStateForRound: (state, action) => {
-      console.log('setting state for round', state, action);
-
       state.cards = action.payload.cards;
       state.date = action.payload.date;
       state.edges = action.payload.edges;
@@ -185,40 +173,32 @@ export const flowSlice = createSlice({
       state.editingMode = !state.editingMode;
     },
     moveNodeSpeech: (state, action) => {
-      let idx = -1;
-      let currentSpeech;
-      state.cards.forEach((card, cardIdx) => {
-        if (card.id === action.payload.cardId) {
-          idx = cardIdx;
-          currentSpeech = card.speech;
+      const cards = [];
+      const speeches = {};
+
+      const lastIdx = state.speeches.length - 1;
+      state.speeches.forEach((speech, idx) => {
+        speeches[speech.id] = {'left': '', 'right': ''};
+        if (idx === 0) {
+          speeches[speech.id]['left'] = state.speeches[lastIdx].id;
+          speeches[speech.id]['right'] = state.speeches[idx + 1].id;
+        } else if (idx === lastIdx) {
+          speeches[speech.id]['left'] = state.speeches[idx - 1].id;
+          speeches[speech.id]['right'] = state.speeches[0].id;
+        } else {
+          speeches[speech.id]['left'] = state.speeches[idx - 1].id;
+          speeches[speech.id]['right'] = state.speeches[idx + 1].id;
         }
       });
-      if (idx !== -1 && currentSpeech) {
-        let speechIdx = -1;
-        state.speeches.forEach((speech, sIdx) => {
-          if (speech.id === currentSpeech) {
-            speechIdx = sIdx;
-          }
-        });
-        if (speechIdx !== -1) {
-          if (action.payload.direction === 'left') {
-            if (speechIdx > 0) {
-              speechIdx -= 1;
-            } else {
-              speechIdx = state.speeches.length - 1;
-            }
-          } else if (action.payload.direction === 'right') {
-            if (speechIdx < state.speeches.length - 1) {
-              speechIdx += 1;
-            } else {
-              speechIdx = 0;
-            }            
-          }
 
-          console.log('got direction', action, idx, speechIdx, state.cards[idx].speech);
-          state.cards[idx].speech = state.speeches[speechIdx].id;
+      state.cards.forEach(card => {
+        if (card.id === action.payload.cardId) {
+          card.speech = speeches[card.speech][action.payload.direction].id;
         }
-      }
+        cards.push(card);
+      });
+
+      state.cards = cards;
     }
   },
 });
@@ -249,6 +229,7 @@ export const {
   setSelectedNode,
   setSelectedTags,
   setShouldCenterOnActive,
+  setSpeeches,
   setSpeechNodes,
   setSpeechYPosition,
   setStatus,

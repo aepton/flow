@@ -42,11 +42,9 @@ function useKeyPress(targetKey) {
   const [keyPressed, setKeyPressed] = React.useState(false);
   const dispatch = useDispatch();
 
-  function moveHandler({ key }) {
-    console.log(key);
+  function moveHandler({ key, event }) {
     if (key === targetKey) {
       if (targetKey === "ArrowDown") {
-        console.log('down', window.status);
         if (window.status === 'navigating') {
           dispatch(moveDown());
         }
@@ -55,7 +53,6 @@ function useKeyPress(targetKey) {
           dispatch(moveUp());
         }
       } else if (targetKey === "t") {
-        console.log('tagging');
         window.status = 'tagging';
       } else if (targetKey === "Escape") {
         dispatch(escapeStatus());
@@ -140,17 +137,15 @@ export default function Home(props) {
   const tagShortcut = useKeyPress("t");
 
   if (downPress) {
-    console.log('down');
     if (status == 'navigating' && cards.length > props.selectedCard) {
       props.setSelectedCard(props.selectedCard + 1);
     }
   } else if (upPress) {
-    console.log('up');
     if (status == 'navigating' && props.selectedCard > -1) {
       props.setSelectedCard(props.selectedCard - 1);
     }
   } else if (tagShortcut) {
-    console.log('tagging shortcut');
+    ;
   }
 
   useEffect(() => {
@@ -193,7 +188,6 @@ export default function Home(props) {
   const allTags = Object.keys(tags);
   let dirty = false;
   if (cards.forEach) {
-    console.log('rendering', cards);
     cards.forEach((card, idx) => {
       const speechIdx = speeches.indexOf(card.speech);
       const cardId = `card_${card.id}`;
@@ -286,7 +280,6 @@ export default function Home(props) {
 
   const renderedEdges = [];
   if (dirty) {
-    console.log('dirty!!!!!');
     setTimeout(() => {
       const info = {};
       instance.getNodes().forEach(node => {
@@ -294,7 +287,6 @@ export default function Home(props) {
           info[node.id] = {height: node.height, width: node.width};
         }
       });
-      console.log('setting', info);
       dispatch(setCardHeightWidth(info));
     }, 500);
   } else {
@@ -344,7 +336,6 @@ export default function Home(props) {
 
   const onEdgeClick = (event, edge) => {
     if (editingMode) {
-      console.log('edge click', event, edge);
       dispatch(removeEdge(edge));
     }
   }
@@ -356,8 +347,6 @@ export default function Home(props) {
   const closeFlyoutEvent = () => {
     dispatch(closeFlyout());
   }
-
-  console.log('rendering', cursorCellId, cards);
   
   return (
     <div>
@@ -391,8 +380,8 @@ export default function Home(props) {
           proOptions={{hideAttribution: true}}
           panOnDrag={false}
           nodesDraggable={false}
-          nodesConnectable={false}
-          nodesFocusable={false}
+          nodesConnectable={editingMode}
+          nodesFocusable={editingMode}
           onClick={closeFlyoutEvent}
         >
           <Panel position="top-left"></Panel>
