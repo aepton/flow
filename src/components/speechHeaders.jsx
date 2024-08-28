@@ -7,7 +7,7 @@ import { closeFlyout, setSpeeches } from "../slices/flowSlice";
 export default function SpeechHeaders(props) {
     const editing = useSelector((state) => state.flow.editingMode);
     const moderators = useSelector((state) => state.flow.moderators);
-    const speeches = useSelector((state) => state.flow.speeches);
+    const speeches = useSelector((state) => state.flow.speeches) || [];
 
     const dispatch = useDispatch();
 
