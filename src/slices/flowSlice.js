@@ -4,11 +4,11 @@ export const flowSlice = createSlice({
   name: "flow",
   initialState: {
     cards: [],
-    cellId: -1,
+    cellId: 0,
     clusters: {},
     date: null,
     edges: [],
-    editingMode: false,
+    editingMode: true,
     flyoutOpen: false,
     instance: null,
     moderators: [],
@@ -20,26 +20,37 @@ export const flowSlice = createSlice({
     speechId: 0,
     speechNodes: [],
     speechYPosition: 0,
-    status: 'navigating',
+    status: 'node',
     tags: [],
     title: '',
     url: null
   },
   reducers: {
     addCardAfter: (state, action) => {
+      const card = { id: crypto.randomUUID(), speech: crypto.randomUUID(), text: action.payload.card };
+      console.log(card);
+      if (state.cards.length === 0) {
+        state.cards.splice(0, 0, card);
+        state.cellId = 0;
+        return;
+      }
+
       let existingIdx = -1;
       let existingSpeech = null;
-      state.cards.forEach((card, idx) => {
-        if (card.id === action.payload) {
+      state.cards.forEach((c, idx) => {
+        if (c.id === action.payload) {
           existingIdx = idx;
-          existingSpeech = card.speech;
+          existingSpeech = c.speech;
         }
       });
       if (!existingSpeech) {
-        existingSpeech = state.cards[-1].speech;
+        console.log(state.cards);
+        if (state.cards[-1]) {
+          existingSpeech = state.cards[-1].speech;
+        }
       }
       const newIdx = existingIdx + 1;
-      state.cards.splice(newIdx, 0, { id: crypto.randomUUID(), speech: existingSpeech, text: '?' });
+      state.cards.splice(newIdx, 0, card);
       state.cellId = newIdx;
     },
     addEdge: (state, action) => {

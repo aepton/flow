@@ -62,6 +62,7 @@ function useKeyPress(targetKey) {
           const id = document.getElementsByClassName(
             'text-entry-node'
           )[0].parentElement.parentElement.parentElement.getAttribute('data-id').split('card_')[1];
+          console.log('got id', id, text);
           dispatch(editCardText({ id, text }));
         }
       }
@@ -162,12 +163,16 @@ export default function Home(props) {
     });
   }
 
+  if (speeches.length === 0) {
+    speeches.push("Initial");
+  }
+
   const columnPadding = 50;
   const columnWidth = Math.max(
     (window.innerWidth - (columnPadding * (speeches.length - 1))) / speeches.length,
     window.innerWidth / 2.5
   );
-
+    console.log('got column width', columnWidth);
   const renderedNodes = [];
   let yPosition = 0;
   const yPadding = 30;
@@ -187,7 +192,16 @@ export default function Home(props) {
   let activeNode = null;
   const allTags = Object.keys(tags);
   let dirty = false;
+  console.log('counting cards')
   if (cards.forEach) {
+    console.log('phew')
+    const generateEntryNode = (speechId, cardsLength) => ({
+      id: "card-entry-" + speechId,
+      position: { x: 200 * speechId + 37, y: 100 * (cardsLength + 1.2) },
+      type: 'textEntry',
+      style: { border: 'none' },
+    });
+
     cards.forEach((card, idx) => {
       const speechIdx = speeches.indexOf(card.speech);
       const cardId = `card_${card.id}`;
@@ -259,15 +273,18 @@ export default function Home(props) {
         yPosition += (card.height || 0) + yPadding;
       }
   
+      console.log('checking editing');
       if (editingMode && cursorCellId == cards.length) {
-        renderedNodes.push({
-          id: "card-entry-" + speechIdx,
-          position: { x: 200 * speechIdx + 37, y: 100 * (cards.length + 1.2) },
-          type: 'textEntry',
-          style: { border: 'none' },
-        }); 
+        console.log('yay?');
+        renderedNodes.push(generateEntryNode(speechIdx, cards.length)); 
       }
     });
+
+    console.log('checking cards', cards.length);
+    if (cards.length === 0) {
+      console.log(generateEntryNode(0, 0));
+      renderedNodes.push(generateEntryNode(0, 0));
+    }
   }
 
   if (activeNode) {
@@ -360,7 +377,7 @@ export default function Home(props) {
         id="flowCanvas"
         style={{
           width: `${columnWidth * speeches.length}px`,
-          height: `${yPosition}px`
+          height: `${Math.max(500, yPosition + 2 * yPadding)}px`
         }}>
         <ReactFlow
           nodes={renderedNodes}

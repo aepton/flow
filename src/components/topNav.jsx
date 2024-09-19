@@ -58,38 +58,36 @@ export default function TopNav() {
         <div>
             <div>
                 <div id="speakers" className={`${editingMode ? 'editing' : ''}`}>
-                    <Flyout />
                     <div id="nonFlyout">
                         <div id="header">
-                            <img src={logoUrl} id="logo" onClick={toggleFlyout} />
-                            <div id="debateTitleParent" onClick={closeFlyoutEvent}>
+                            <div id="debateTitleParent">
                                 <div id="debateTitle">
                                     <span>{title}</span><br />
                                     <a href={url} id="source-tag">{source}, {date}</a>
                                 </div>
                             </div>
-                            <div id="editToggle" onClick={closeFlyoutEvent}>
-                                <label>
-                                    <Toggle
-                                        defaultChecked={editingMode}
-                                        icons={{
-                                            checked: <img src={pencilUrl} className="toggleIcon" />,
-                                            unchecked: <img src={pencilUrl} className="toggleIcon" />,
-                                        }}
-                                        onChange={toggleEditing}
+                            <div id="navParent">
+                                <div id="editToggle">
+                                    <label>
+                                        <Toggle
+                                            defaultChecked={editingMode}
+                                            icons={{
+                                                checked: <img src={pencilUrl} className="toggleIcon" />,
+                                                unchecked: <img src={pencilUrl} className="toggleIcon" />,
+                                            }}
+                                            onChange={toggleEditing}
+                                        />
+                                    </label>
+                                    {editingMode &&
+                                        <img src={downloadUrl} id="download" onClick={downloadHandler} />
+                                    }
+                                    <Multiselect
+                                        data={allTags}
+                                        placeholder="filter tags"
+                                        value={selectedTags}
+                                        onChange={onSetSelectedTags}
                                     />
-                                </label>
-                                {editingMode &&
-                                    <img src={downloadUrl} id="download" onClick={downloadHandler} />
-                                }
-                            </div>
-                            <div id="tagSelect" onClick={closeFlyoutEvent}>
-                                <Multiselect
-                                    data={allTags}
-                                    placeholder="filter tags"
-                                    value={selectedTags}
-                                    onChange={onSetSelectedTags}
-                                />
+                                </div>
                             </div>
                         </div>
                     </div>

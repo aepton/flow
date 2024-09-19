@@ -9,8 +9,17 @@ export default async (round, setInitialStateForRound) => {
         response = await fetch(manifest[round]);
         data = await response.json();
     } else {
-        response = await fetch(manifest[Object.keys(manifest)[0]]);
-        data = await response.json();
+        data = {
+            cards: [],
+            edges: [],
+            title: '',
+            meta: '',
+            tags: {},
+            date: '',
+            source: '',
+            url: '',
+            moderators: []
+        }
     }
 
     setInitialStateForRound(data);

@@ -12,7 +12,7 @@ function TextEntryNode({ data }) {
     if (event.target.value.includes("\n")) {
       const val = event.target.value.replace("\n", "");
       if (val != "") {
-        dispatch(addCard({card: event.target.value, speechId }));
+        dispatch(addCardAfter({card: event.target.value, speechId }));
       }
     }
   }, []);
