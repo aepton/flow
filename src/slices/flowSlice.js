@@ -27,14 +27,16 @@ export const flowSlice = createSlice({
   },
   reducers: {
     addCardAfter: (state, action) => {
-      const card = { id: crypto.randomUUID(), speech: crypto.randomUUID(), text: action.payload.card };
+      console.log('got state, action', state, action);
+      const card = { id: crypto.randomUUID(), speech: action.payload.speechId, text: action.payload.card };
       console.log(card);
       if (state.cards.length === 0) {
         state.cards.splice(0, 0, card);
-        state.cellId = 0;
+        state.cellId = 1;
         return;
       }
 
+      /*
       let existingIdx = -1;
       let existingSpeech = null;
       state.cards.forEach((c, idx) => {
@@ -49,9 +51,11 @@ export const flowSlice = createSlice({
           existingSpeech = state.cards[-1].speech;
         }
       }
-      const newIdx = existingIdx + 1;
-      state.cards.splice(newIdx, 0, card);
-      state.cellId = newIdx;
+      */
+      // const newIdx = existingIdx + 1;
+      // state.cards.splice(newIdx, 0, card);
+      state.cards.push(card);
+      state.cellId = state.cards.length;
     },
     addEdge: (state, action) => {
       state.edges.push(action.payload);

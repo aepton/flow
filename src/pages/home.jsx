@@ -130,6 +130,19 @@ export default function Home(props) {
   const tags = useSelector((state) => state.flow.tags);
   const title = useSelector((state) => state.flow.title);
 
+  console.log(
+    'cards', cards,
+    'cursorCellId', cursorCellId,
+    'edges', edges,
+    'editingMode', editingMode,
+    'selectedTags', selectedTags,
+    'shouldCenterOnActive', shouldCenterOnActive,
+    'speechSettings', speechSettings,
+    'status', status,
+    'tags', tags,
+    'title', title
+  )
+
   const dispatch = useDispatch();
 
   const downPress = useKeyPress("ArrowDown");
@@ -150,6 +163,7 @@ export default function Home(props) {
   }
 
   useEffect(() => {
+    console.log('loading data');
     dataLoader(props.round, round => dispatch(setInitialStateForRound(round)));
     return () => {};
   }, [dispatch]);
@@ -164,7 +178,7 @@ export default function Home(props) {
   }
 
   if (speeches.length === 0) {
-    speeches.push("Initial");
+    speeches.push(0);
   }
 
   const columnPadding = 50;
@@ -194,12 +208,11 @@ export default function Home(props) {
   let dirty = false;
   console.log('counting cards')
   if (cards.forEach) {
-    console.log('phew')
     const generateEntryNode = (speechId, cardsLength) => ({
       id: "card-entry-" + speechId,
-      position: { x: 200 * speechId + 37, y: 100 * (cardsLength + 1.2) },
+      position: { x: 200 * speechId + 10, y: 100 * (cardsLength + 1.2) },
       type: 'textEntry',
-      style: { border: 'none' },
+      style: { border: 'none', width: columnWidth },
     });
 
     cards.forEach((card, idx) => {
@@ -209,6 +222,11 @@ export default function Home(props) {
       const clusterId = clusters[cardId];
   
       const active = cursorCellId == idx;
+
+      const visible = Object.keys(card).indexOf('height') !== -1;
+      if (!visible) {
+        dirty = true;
+      }
   
       const cardTags = [];
       allTags.forEach(key => {
@@ -227,11 +245,6 @@ export default function Home(props) {
             isSelectedTag = false;
           }
         });
-      }
-
-      const visible = Object.keys(card).indexOf('height') !== -1;
-      if (!visible) {
-        dirty = true;
       }
   
       if (isSelectedTag) {
@@ -297,6 +310,7 @@ export default function Home(props) {
 
   const renderedEdges = [];
   if (dirty) {
+    console.log('dirty, setting timeout');
     setTimeout(() => {
       const info = {};
       instance.getNodes().forEach(node => {

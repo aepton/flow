@@ -9,10 +9,12 @@ function TextEntryNode({ data }) {
   const speechId = useSelector((state) => state.flow.speechId);
   
   const onChange = useCallback((event) => {
+    console.log('got event', event);
     if (event.target.value.includes("\n")) {
       const val = event.target.value.replace("\n", "");
       if (val != "") {
-        dispatch(addCardAfter({card: event.target.value, speechId }));
+        dispatch(addCardAfter({card: val, speechId }));
+        event.target.value = "";
       }
     }
   }, []);

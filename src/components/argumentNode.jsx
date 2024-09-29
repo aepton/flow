@@ -4,7 +4,7 @@ import Multiselect from "react-widgets/Multiselect";
 
 import { useDispatch } from "react-redux";
 
-import { addCardAfter, moveNodeSpeech, removeCard, setSelectedNode } from "../slices/flowSlice";
+import { editCardText, moveNodeSpeech, moveDown, removeCard, setSelectedNode } from "../slices/flowSlice";
 
 import leftUrl from "../../left.svg";
 import minusUrl from "../../minus.svg";
@@ -16,7 +16,7 @@ import trashUrl from "../../trash.svg";
 function ArgumentNode({ data }) {
   const dispatch = useDispatch();
 
-  const onChange = useCallback((value, event) => {
+  const onMultiselectChange = useCallback((value, event) => {
     console.log('change', value, event);
     if (event.action == 'remove') {
       data.removeTag(event.dataItem);
@@ -41,6 +41,17 @@ function ArgumentNode({ data }) {
   const onClick = () => {
     dispatch(setSelectedNode(data.nodeIdx));
     window.status = 'node';
+  }
+
+  const onTextEntryChange = (event) => {
+    const text = event.nativeEvent.target.innerText;
+    if (text.includes("\n")) {
+      const val = text.replace("\n", "");
+      if (val != "") {
+        dispatch(editCardText({id: data.id, text: val }));
+        dispatch(moveDown());
+      }
+    }
   }
 
   const collapseExchange = () => {
@@ -90,7 +101,7 @@ function ArgumentNode({ data }) {
         }
         {data.active && data.editingMode &&
           <div>
-            <div className="text-entry-node" contentEditable ref={autofocusInput} onClick={onClick}>
+            <div className="text-entry-node" contentEditable ref={autofocusInput} onClick={onClick} onInput={onTextEntryChange}>
               {data.text}
             </div>
             <Multiselect
@@ -98,7 +109,7 @@ function ArgumentNode({ data }) {
               placeholder="add tags"
               allowCreate
               autoFocus={data.editingMode}
-              onChange={onChange}
+              onChange={onMultiselectChange}
               value={data.tags}
               onCreate={onCreate}
             />
