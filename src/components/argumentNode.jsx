@@ -88,7 +88,7 @@ function ArgumentNode({ data }) {
         {false && <Handle type="target" position={Position.Top} style={{ background: 'black' }} />}
         {data.sourceHandle && <Handle type="source" position={Position.Bottom} className={handleClass} /> }
         {data.targetHandle && <Handle type="target" position={Position.Top} className={handleClass} /> }
-        {data.editingMode &&
+        {data.editingMode && false &&
           <div>
             <img src={trashUrl} className="delete-node control-node" onClick={deleteNode} />
             <img src={rightUrl} className="move-right-node control-node" onClick={moveRight} />

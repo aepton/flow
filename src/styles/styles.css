@@ -137,6 +137,10 @@ h1 {
   border: none;
 }
 
+.react-flow {
+  overflow: visible !important;
+}
+
 .edit-handle:hover {
   animation: fadeIn 1s;
   background-color: #000;
@@ -153,6 +157,7 @@ h2 {
 .text-entry-node {
   padding: 0px;
   outline: 0px solid transparent !important;
+  max-width: 45%;
 }
 
 .speech-label-node {

@@ -52,6 +52,10 @@ function useKeyPress(targetKey) {
         if (window.status === 'navigating') {
           dispatch(moveUp());
         }
+      } else if (targetKey === "ArrowRight") {
+        console.log("arrow right");
+      } else if (targetKey === "ArrowLeft") {
+        console.log("arrow left");
       } else if (targetKey === "t") {
         window.status = 'tagging';
       } else if (targetKey === "Escape") {
@@ -188,9 +192,10 @@ export default function Home(props) {
   }
 
   const columnPadding = 50;
+  const windowWidth = window.innerWidth - 10;
   const columnWidth = Math.max(
-    (window.innerWidth - (columnPadding * (speeches.length - 1))) / speeches.length,
-    window.innerWidth / 2.5
+    (windowWidth - (columnPadding * (speeches.length - 1))) / speeches.length,
+    windowWidth / 2.5
   );
   const renderedNodes = [];
   let yPosition = 0;
