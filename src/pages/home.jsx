@@ -131,6 +131,7 @@ export default function Home(props) {
   const title = useSelector((state) => state.flow.title);
 
   console.log(
+    Date.now() / 1000,
     'cards', cards,
     'cursorCellId', cursorCellId,
     'edges', edges,
@@ -147,6 +148,8 @@ export default function Home(props) {
 
   const downPress = useKeyPress("ArrowDown");
   const upPress = useKeyPress("ArrowUp");
+  const leftPress = useKeyPress("ArrowLeft");
+  const rightPress = useKeyPress("ArrowRight");
   const enterPress = useKeyPress("Enter");
   const tagShortcut = useKeyPress("t");
 
@@ -158,12 +161,15 @@ export default function Home(props) {
     if (status == 'navigating' && props.selectedCard > -1) {
       props.setSelectedCard(props.selectedCard - 1);
     }
+  } else if (leftPress) {
+    console.log("left press!");
+  } else if (rightPress) {
+    console.log("right press!");
   } else if (tagShortcut) {
     ;
   }
 
   useEffect(() => {
-    console.log('loading data');
     dataLoader(props.round, round => dispatch(setInitialStateForRound(round)));
     return () => {};
   }, [dispatch]);
@@ -186,7 +192,6 @@ export default function Home(props) {
     (window.innerWidth - (columnPadding * (speeches.length - 1))) / speeches.length,
     window.innerWidth / 2.5
   );
-    console.log('got column width', columnWidth);
   const renderedNodes = [];
   let yPosition = 0;
   const yPadding = 30;
@@ -206,7 +211,6 @@ export default function Home(props) {
   let activeNode = null;
   const allTags = Object.keys(tags);
   let dirty = false;
-  console.log('counting cards')
   if (cards.forEach) {
     const generateEntryNode = (speechId, cardsLength) => ({
       id: "card-entry-" + speechId,
@@ -286,16 +290,12 @@ export default function Home(props) {
         yPosition += (card.height || 0) + yPadding;
       }
   
-      console.log('checking editing');
       if (editingMode && cursorCellId == cards.length) {
-        console.log('yay?');
         renderedNodes.push(generateEntryNode(speechIdx, cards.length)); 
       }
     });
 
-    console.log('checking cards', cards.length);
     if (cards.length === 0) {
-      console.log(generateEntryNode(0, 0));
       renderedNodes.push(generateEntryNode(0, 0));
     }
   }
@@ -310,7 +310,7 @@ export default function Home(props) {
 
   const renderedEdges = [];
   if (dirty) {
-    console.log('dirty, setting timeout');
+    console.log(Date.now() / 1000, 'dirty, setting timeout');
     setTimeout(() => {
       const info = {};
       instance.getNodes().forEach(node => {
@@ -319,7 +319,7 @@ export default function Home(props) {
         }
       });
       dispatch(setCardHeightWidth(info));
-    }, 500);
+    }, 50);
   } else {
     edges.forEach((edge, idx) => {
       renderedEdges.push({

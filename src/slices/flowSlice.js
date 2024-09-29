@@ -27,7 +27,7 @@ export const flowSlice = createSlice({
   },
   reducers: {
     addCardAfter: (state, action) => {
-      console.log('got state, action', state, action);
+      console.log(Date.now() / 1000, 'got state, action', state, action);
       const card = { id: crypto.randomUUID(), speech: action.payload.speechId, text: action.payload.card };
       console.log(card);
       if (state.cards.length === 0) {
