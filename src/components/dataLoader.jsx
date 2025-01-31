@@ -11,14 +11,14 @@ export default async (round, setInitialStateForRound) => {
     data = await response.json();
   } else {
     data = {
-      cards: [],
+      cards: [[]],
       edges: [],
       title: "",
       meta: "",
       tags: {},
       date: "",
       source: "",
-      speeches: [],
+      speeches: [0],
       url: "",
       moderators: [],
     };

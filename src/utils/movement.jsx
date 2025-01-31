@@ -25,6 +25,7 @@ export default function useKeyPress(targetKey) {
           dispatch(moveUp());
         }
       } else if (targetKey === "ArrowRight") {
+        console.log("move right", window.status);
         if (window.status === "navigating") {
           dispatch(moveRight());
         }

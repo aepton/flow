@@ -44,6 +44,7 @@ export default function SpeechHeaders(props) {
   };
 
   const speechNav = [];
+  console.log('editing?', editing);
   speeches.forEach((speech, idx) => {
     speechNav.push(
       <span
@@ -53,9 +54,10 @@ export default function SpeechHeaders(props) {
         }}
         className={`speechLabel ${moderators.indexOf(speech.id) !== -1 ? "moderatorSpeech" : ""}`}
         contentEditable={editing}
-        data-speechId={speech.id}
+        data-speechid={speech.id}
         onClick={setStatus}
         onKeyDown={setHeaders}
+        key={`speechNav${idx}`}
       >
         {speech.label}
         {moderators.indexOf(speech.id) !== -1 ? moderatorTag : ""}

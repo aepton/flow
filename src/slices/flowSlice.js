@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 export const flowSlice = createSlice({
   name: "flow",
   initialState: {
-    cards: [],
+    cards: [[]],
     cellId: 0,
     clusters: {},
     date: null,
@@ -16,7 +16,7 @@ export const flowSlice = createSlice({
     selectedTags: [],
     shouldCenterOnActive: false,
     source: null,
-    speeches: [],
+    speeches: [0],
     speechId: 0,
     speechNodes: [],
     speechYPosition: 0,
@@ -34,8 +34,8 @@ export const flowSlice = createSlice({
         text: action.payload.card,
       };
       console.log(card);
-      if (state.cards.length === 0) {
-        state.cards.splice(0, 0, card);
+      if (state.cards[state.speechId].length === 0) {
+        state.cards[state.speechId].splice(0, 0, card);
         state.cellId = 1;
         return;
       }
@@ -58,7 +58,7 @@ export const flowSlice = createSlice({
       */
       // const newIdx = existingIdx + 1;
       // state.cards.splice(newIdx, 0, card);
-      state.cards.push(card);
+      state.cards[state.speechId].push(card);
       state.cellId = state.cards.length;
     },
     addEdge: (state, action) => {
@@ -96,15 +96,17 @@ export const flowSlice = createSlice({
       if (state.speechId > 0) {
         state.speechId -= 1;
       }
+      state.shouldCenterOnActive = true;
     },
     moveRight: (state) => {
       state.speechId += 1;
       console.log(JSON.stringify(state));
       if (state.cards.length <= state.speechId) {
         state.cards.push([]);
-        state.speeches.push([`Speech ${state.speeches.length + 1}`]);
+        state.speeches.push(state.speeches.length);
         state.cellId = 0;
       }
+      state.shouldCenterOnActive = true;
     },
     removeEdge: (state, action) => {
       state.edges = state.edges.filter(
@@ -125,9 +127,13 @@ export const flowSlice = createSlice({
     },
     setCardHeightWidth: (state, action) => {
       const positionCards = [];
-      state.cards.forEach((card) => {
-        const id = `card_${card.id}`;
-        positionCards.push({ ...card, ...action.payload[id] });
+      state.cards.forEach((speech) => {
+        const speechPositions = [];
+        speech.forEach(card => {
+          const id = `card_${card.id}`;
+          speechPositions.push({ ...card, ...action.payload[id] });
+        });
+        positionCards.push(speechPositions);
       });
       state.cards = positionCards;
     },
@@ -185,6 +191,9 @@ export const flowSlice = createSlice({
       state.tags = action.payload.tags;
       state.title = action.payload.title;
       state.url = action.payload.url;
+
+      state.cellId = 0;
+      state.speechId = 0;
     },
     toggleFlyoutOpen: (state) => {
       state.flyoutOpen = !state.flyoutOpen;
