@@ -20,15 +20,19 @@ export const flowSlice = createSlice({
     speechId: 0,
     speechNodes: [],
     speechYPosition: 0,
-    status: 'node',
+    status: "node",
     tags: [],
-    title: '',
-    url: null
+    title: "",
+    url: null,
   },
   reducers: {
     addCardAfter: (state, action) => {
-      console.log(Date.now() / 1000, 'got state, action', state, action);
-      const card = { id: crypto.randomUUID(), speech: action.payload.speechId, text: action.payload.card };
+      console.log(Date.now() / 1000, "got state, action", state, action);
+      const card = {
+        id: crypto.randomUUID(),
+        speech: action.payload.speechId,
+        text: action.payload.card,
+      };
       console.log(card);
       if (state.cards.length === 0) {
         state.cards.splice(0, 0, card);
@@ -90,35 +94,40 @@ export const flowSlice = createSlice({
     },
     moveLeft: (state) => {
       if (state.speechId > 0) {
-        state.speechId -= 1; 
+        state.speechId -= 1;
       }
     },
     moveRight: (state) => {
       state.speechId += 1;
+      console.log(JSON.stringify(state));
       if (state.cards.length <= state.speechId) {
         state.cards.push([]);
-        state.speeches.push([`Speech ${state.speeches.length + 1}`]); 
+        state.speeches.push([`Speech ${state.speeches.length + 1}`]);
         state.cellId = 0;
       }
     },
     removeEdge: (state, action) => {
       state.edges = state.edges.filter(
-        edge => edge.source !== action.payload.source && edge.target !== action.payload.target
+        (edge) =>
+          edge.source !== action.payload.source &&
+          edge.target !== action.payload.target,
       );
     },
     removeCard: (state, action) => {
-      state.cards = state.cards.filter(card => card.id !== action.payload);
+      state.cards = state.cards.filter((card) => card.id !== action.payload);
       const edgeId = `card_${action.payload}`;
-      state.edges = state.edges.filter(edge => edge.source !== edgeId || edge.target !== edgeId);
+      state.edges = state.edges.filter(
+        (edge) => edge.source !== edgeId || edge.target !== edgeId,
+      );
     },
     setCards: (state, action) => {
       state.cards = action.payload;
     },
     setCardHeightWidth: (state, action) => {
       const positionCards = [];
-      state.cards.forEach(card => {
+      state.cards.forEach((card) => {
         const id = `card_${card.id}`;
-        positionCards.push({ ...card, ...action.payload[id]});
+        positionCards.push({ ...card, ...action.payload[id] });
       });
       state.cards = positionCards;
     },
@@ -148,8 +157,8 @@ export const flowSlice = createSlice({
       state.status = action.payload;
     },
     escapeStatus: (state) => {
-      if (state.status === 'tagging') {
-        state.status = 'node';
+      if (state.status === "tagging") {
+        state.status = "node";
       }
     },
     addItemToTag: (state, action) => {
@@ -166,6 +175,7 @@ export const flowSlice = createSlice({
       }
     },
     setInitialStateForRound: (state, action) => {
+      console.log("setting initial state", action.payload);
       state.cards = action.payload.cards;
       state.date = action.payload.date;
       state.edges = action.payload.edges;
@@ -193,20 +203,20 @@ export const flowSlice = createSlice({
 
       const lastIdx = state.speeches.length - 1;
       state.speeches.forEach((speech, idx) => {
-        speeches[speech.id] = {'left': '', 'right': ''};
+        speeches[speech.id] = { left: "", right: "" };
         if (idx === 0) {
-          speeches[speech.id]['left'] = state.speeches[lastIdx].id;
-          speeches[speech.id]['right'] = state.speeches[idx + 1].id;
+          speeches[speech.id]["left"] = state.speeches[lastIdx].id;
+          speeches[speech.id]["right"] = state.speeches[idx + 1].id;
         } else if (idx === lastIdx) {
-          speeches[speech.id]['left'] = state.speeches[idx - 1].id;
-          speeches[speech.id]['right'] = state.speeches[0].id;
+          speeches[speech.id]["left"] = state.speeches[idx - 1].id;
+          speeches[speech.id]["right"] = state.speeches[0].id;
         } else {
-          speeches[speech.id]['left'] = state.speeches[idx - 1].id;
-          speeches[speech.id]['right'] = state.speeches[idx + 1].id;
+          speeches[speech.id]["left"] = state.speeches[idx - 1].id;
+          speeches[speech.id]["right"] = state.speeches[idx + 1].id;
         }
       });
 
-      state.cards.forEach(card => {
+      state.cards.forEach((card) => {
         if (card.id === action.payload.cardId) {
           card.speech = speeches[card.speech][action.payload.direction].id;
         }
@@ -214,7 +224,7 @@ export const flowSlice = createSlice({
       });
 
       state.cards = cards;
-    }
+    },
   },
 });
 
@@ -249,7 +259,7 @@ export const {
   setSpeechYPosition,
   setStatus,
   toggleFlyoutOpen,
-  toggleEditingMode
+  toggleEditingMode,
 } = flowSlice.actions;
 
 export default flowSlice.reducer;

@@ -4,7 +4,7 @@ import { Provider } from "react-redux";
 import { createStore } from "redux";
 import App from "./app.jsx";
 import { HelmetProvider } from "react-helmet-async";
-import store from './store'
+import store from "./store";
 
 /**
  * Root of react site
@@ -22,5 +22,5 @@ ReactDOM.render(
       </Provider>
     </HelmetProvider>
   </React.StrictMode>,
-  document.getElementById("root")
+  document.getElementById("root"),
 );

@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback } from "react";
 
 function SpeechLabelNode({ data }) {
   const onChange = useCallback((evt) => {
@@ -6,7 +6,10 @@ function SpeechLabelNode({ data }) {
   }, []);
 
   return (
-    <div className="speech-label-node">{data.isEditing ? 'HHH' : ''}{data.label}</div>
+    <div className="speech-label-node">
+      {data.isEditing ? "HHH" : ""}
+      {data.label}
+    </div>
   );
 }
 

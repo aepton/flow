@@ -8,8 +8,8 @@ export default () => {
   return (
     <Switch>
       <Route>
-        <Home round={params.get('round')} />
+        <Home round={params.get("round")} />
       </Route>
     </Switch>
   );
-}
+};

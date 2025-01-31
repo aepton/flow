@@ -21,7 +21,7 @@ Replace the header element to use `animated` and apply the wiggle style:
 
 ```js
 <animated.h1 className="title" style={style}>
- About this site
+  About this site
 </animated.h1>
 ```
 

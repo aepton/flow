@@ -1,9 +1,9 @@
 name: flow
 services:
-- build_command: npm run build
-  environment_slug: node-js
-  github:
-    branch: master
-    deploy_on_push: true
-    repo: aepton/flow
-  name: flow
+  - build_command: npm run build
+    environment_slug: node-js
+    github:
+      branch: master
+      deploy_on_push: true
+      repo: aepton/flow
+    name: flow
