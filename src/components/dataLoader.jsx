@@ -18,7 +18,7 @@ export default async (round, setInitialStateForRound) => {
       tags: {},
       date: "",
       source: "",
-      speeches: [0],
+      speeches: [{label: '', id: 0}],
       url: "",
       moderators: [],
     };

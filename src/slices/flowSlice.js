@@ -16,7 +16,7 @@ export const flowSlice = createSlice({
     selectedTags: [],
     shouldCenterOnActive: false,
     source: null,
-    speeches: [0],
+    speeches: [{label: '', id: 0}],
     speechId: 0,
     speechNodes: [],
     speechYPosition: 0,
@@ -79,13 +79,17 @@ export const flowSlice = createSlice({
       state.speeches[action.payload.speechId] = action.payload.speechName;
     },
     moveUp: (state) => {
-      if (state.cellId >= 0) {
-        state.cellId -= 1;
+      if (state.cellId > 0) {
         state.shouldCenterOnActive = true;
+      } else {
+        console.log('editing speech label!');
+        state.status = `speechHeader${state.speechId}`;
       }
+      state.cellId -= 1;
     },
     moveDown: (state) => {
-      if (state.cards.length > state.cellId) {
+      state.status = 'node';
+      if (state.cards[state.speechId].length > state.cellId) {
         state.cellId += 1;
         state.shouldCenterOnActive = true;
       }
@@ -94,14 +98,23 @@ export const flowSlice = createSlice({
       if (state.speechId > 0) {
         state.speechId -= 1;
       }
+      if (state.cellId > state.cards[state.speechId].length) {
+        state.cellId = state.cards[state.speechId].length;
+      }
       state.shouldCenterOnActive = true;
     },
     moveRight: (state) => {
       state.speechId += 1;
       if (state.cards.length <= state.speechId) {
-        state.cards.push([]);
-        state.speeches.push(state.speeches.length);
-        state.cellId = 0;
+        if (state.cards[state.speechId - 1].length > 0) {
+          state.cards.push([]);
+          state.speeches.push({
+            label: '', id: state.speeches.length
+          });
+          state.cellId = 0;
+        } else {
+          state.speechId -= 1;
+        }
       }
       state.cellId = Math.min(state.cards[state.speechId].length, state.cellId);
       state.shouldCenterOnActive = true;

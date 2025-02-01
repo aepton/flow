@@ -107,7 +107,7 @@ export default function Home(props) {
 
   const columnPadding = 50;
   const windowWidth = window.innerWidth - 10;
-  const columnWidth = Math.max(
+  const columnWidth = Math.min(
     (windowWidth - columnPadding * (speeches.length - 1)) / speeches.length,
     windowWidth / 2.5,
   );

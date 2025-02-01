@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useCallback } from "react";
 
 import { useSelector, useDispatch } from "react-redux";
 
@@ -8,6 +9,7 @@ export default function SpeechHeaders(props) {
   const editing = useSelector((state) => state.flow.editingMode);
   const moderators = useSelector((state) => state.flow.moderators);
   const speeches = useSelector((state) => state.flow.speeches) || [];
+  const status = useSelector((state) => state.flow.status);
 
   const dispatch = useDispatch();
 
@@ -20,6 +22,12 @@ export default function SpeechHeaders(props) {
   };
 
   const moderatorTag = " (moderator)";
+
+  const autofocusInput = useCallback((inputElement) => {
+    if (inputElement) {
+      setTimeout((x) => inputElement.focus(), 100);
+    }
+  }, []);
 
   const setHeaders = (evt) => {
     if (window.status === "speech-label" && evt.code === "Enter") {
@@ -52,11 +60,12 @@ export default function SpeechHeaders(props) {
           width: props.columnWidth,
         }}
         className={`speechLabel ${moderators.indexOf(speech.id) !== -1 ? "moderatorSpeech" : ""}`}
-        contentEditable={editing}
+        contentEditable={editing && status === `speechHeader${idx}`}
         data-speechid={speech.id}
         onClick={setStatus}
         onKeyDown={setHeaders}
         key={`speechNav${idx}`}
+        ref={editing && status === `speechHeader${idx}` ? autofocusInput : null}
       >
         {speech.label}
         {moderators.indexOf(speech.id) !== -1 ? moderatorTag : ""}
