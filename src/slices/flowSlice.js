@@ -102,6 +102,7 @@ export const flowSlice = createSlice({
         state.speeches.push(state.speeches.length);
         state.cellId = 0;
       }
+      state.cellId = Math.min(state.cards[state.speechId].length, state.cellId);
       state.shouldCenterOnActive = true;
     },
     removeEdge: (state, action) => {

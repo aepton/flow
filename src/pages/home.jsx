@@ -217,6 +217,11 @@ export default function Home(props) {
           renderedNodes.push(generateEntryNode(speechCardIdx, cards[speechCardIdx].length));
         }
       });
+
+      if (editingMode && speechId == speechCardIdx && cards[speechCardIdx].length === 0) {
+        renderedNodes.push(generateEntryNode(speechCardIdx, 0));
+      }
+
     });
 
     if (cards[0].length === 0) {
