@@ -81,6 +81,7 @@ export const flowSlice = createSlice({
     moveUp: (state) => {
       if (state.cellId >= 0) {
         state.cellId -= 1;
+        state.shouldCenterOnActive = true;
       }
     },
     moveDown: (state) => {

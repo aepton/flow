@@ -194,6 +194,10 @@ h2 {
   z-index: 9999 !important;
 }
 
+.react-flow__node-textEntry {
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
 .text-entry-node > textarea {
   border: none;
   outline: none;

@@ -133,12 +133,16 @@ export default function Home(props) {
   if (cards.forEach) {
     const generateEntryNode = (speechId, cardsLength) => ({
       id: "card-entry-" + speechId,
-      position: { x: 200 * speechId + 10, y: 100 * (cardsLength + 1.2) },
+      position: {
+        x: columnWidth * speechId + (columnPadding * speechId + 1),
+        y: 100 * (cardsLength + 1.2)
+      },
       type: "textEntry",
       style: { border: "none", width: columnWidth },
     });
 
     cards.forEach((speechCards, speechCardIdx) => {
+      yPosition = 0;
       speechCards.forEach((card, cardIdx) => {
         const cardId = `card_${card.id}`;
   
