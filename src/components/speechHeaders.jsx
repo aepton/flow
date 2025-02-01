@@ -44,7 +44,6 @@ export default function SpeechHeaders(props) {
   };
 
   const speechNav = [];
-  console.log('editing?', editing);
   speeches.forEach((speech, idx) => {
     speechNav.push(
       <span

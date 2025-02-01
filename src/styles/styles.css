@@ -158,6 +158,7 @@ h2 {
   padding: 0px;
   outline: 0px solid transparent !important;
   max-width: 45%;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
 }
 
 @keyframes emergeFromSurface {

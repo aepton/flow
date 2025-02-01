@@ -27,13 +27,11 @@ export const flowSlice = createSlice({
   },
   reducers: {
     addCardAfter: (state, action) => {
-      console.log(Date.now() / 1000, "got state, action", state, action);
       const card = {
         id: crypto.randomUUID(),
         speech: action.payload.speechId,
         text: action.payload.card,
       };
-      console.log(card);
       if (state.cards[state.speechId].length === 0) {
         state.cards[state.speechId].splice(0, 0, card);
         state.cellId = 1;
@@ -50,7 +48,6 @@ export const flowSlice = createSlice({
         }
       });
       if (!existingSpeech) {
-        console.log(state.cards);
         if (state.cards[-1]) {
           existingSpeech = state.cards[-1].speech;
         }
@@ -59,7 +56,7 @@ export const flowSlice = createSlice({
       // const newIdx = existingIdx + 1;
       // state.cards.splice(newIdx, 0, card);
       state.cards[state.speechId].push(card);
-      state.cellId = state.cards.length;
+      state.cellId = state.cards[state.speechId].length;
     },
     addEdge: (state, action) => {
       state.edges.push(action.payload);
@@ -100,7 +97,6 @@ export const flowSlice = createSlice({
     },
     moveRight: (state) => {
       state.speechId += 1;
-      console.log(JSON.stringify(state));
       if (state.cards.length <= state.speechId) {
         state.cards.push([]);
         state.speeches.push(state.speeches.length);
@@ -181,7 +177,6 @@ export const flowSlice = createSlice({
       }
     },
     setInitialStateForRound: (state, action) => {
-      console.log("setting initial state", action.payload);
       state.cards = action.payload.cards;
       state.date = action.payload.date;
       state.edges = action.payload.edges;

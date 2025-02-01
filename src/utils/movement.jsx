@@ -25,7 +25,6 @@ export default function useKeyPress(targetKey) {
           dispatch(moveUp());
         }
       } else if (targetKey === "ArrowRight") {
-        console.log("move right", window.status);
         if (window.status === "navigating") {
           dispatch(moveRight());
         }
@@ -45,7 +44,6 @@ export default function useKeyPress(targetKey) {
             .getElementsByClassName("text-entry-node")[0]
             .parentElement.parentElement.parentElement.getAttribute("data-id")
             .split("card_")[1];
-          console.log("got id", id, text);
           dispatch(editCardText({ id, text }));
         }
       }

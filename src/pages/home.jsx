@@ -60,32 +60,6 @@ export default function Home(props) {
   const tags = useSelector((state) => state.flow.tags);
   const title = useSelector((state) => state.flow.title);
 
-  console.log(
-    Date.now() / 1000,
-    "cards",
-    cards,
-    "cellId",
-    cellId,
-    "speechId",
-    speechId,
-    "edges",
-    edges,
-    "editingMode",
-    editingMode,
-    "selectedTags",
-    selectedTags,
-    "shouldCenterOnActive",
-    shouldCenterOnActive,
-    "speeches",
-    speeches,
-    "status",
-    status,
-    "tags",
-    tags,
-    "title",
-    title,
-  );
-
   const dispatch = useDispatch();
 
   const downPress = useKeyPress("ArrowDown");
@@ -96,23 +70,17 @@ export default function Home(props) {
   const tagShortcut = useKeyPress("t");
 
   if (downPress) {
-    console.log("down");
     if (status == "navigating" && cards.length > props.selectedCard) {
       props.setSelectedCard(props.selectedCard + 1);
     }
   } else if (upPress) {
-    console.log("up");
     if (status == "navigating" && props.selectedCard > -1) {
       props.setSelectedCard(props.selectedCard - 1);
     }
   } else if (leftPress) {
-    console.log("left press!");
   } else if (rightPress) {
-    console.log("right press!");
   } else if (tagShortcut) {
-    console.log("tag");
   } else if (enterPress) {
-    console.log("enter");
   }
 
   useEffect(() => {
@@ -162,9 +130,7 @@ export default function Home(props) {
   let activeNode = null;
   const allTags = Object.keys(tags);
   let dirty = false;
-  console.log('hm?', cards, cards.forEach);
   if (cards.forEach) {
-    console.log('yay');
     const generateEntryNode = (speechId, cardsLength) => ({
       id: "card-entry-" + speechId,
       position: { x: 200 * speechId + 10, y: 100 * (cardsLength + 1.2) },
@@ -173,7 +139,6 @@ export default function Home(props) {
     });
 
     cards.forEach((speechCards, speechCardIdx) => {
-      console.log(speechCards);
       speechCards.forEach((card, cardIdx) => {
         const cardId = `card_${card.id}`;
   
@@ -248,8 +213,8 @@ export default function Home(props) {
           yPosition += (card.height || 0) + yPadding;
         }
   
-        if (editingMode && cellId == cards.length && speechId == speechCardIdx) {
-          renderedNodes.push(generateEntryNode(speechCardIdx, cards.length));
+        if (editingMode && cellId == cards[speechCardIdx].length && speechId == speechCardIdx) {
+          renderedNodes.push(generateEntryNode(speechCardIdx, cards[speechCardIdx].length));
         }
       });
     });
@@ -269,7 +234,6 @@ export default function Home(props) {
 
   const renderedEdges = [];
   if (dirty) {
-    console.log(Date.now() / 1000, "dirty, setting timeout");
     setTimeout(() => {
       const info = {};
       instance.getNodes().forEach((node) => {
