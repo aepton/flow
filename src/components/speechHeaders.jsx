@@ -48,7 +48,7 @@ export default function SpeechHeaders(props) {
         },
       );
       dispatch(setSpeeches(speeches));
-      document.getElementById(status).innerHTML = "";
+      // document.getElementById(status).innerHTML = "";
       dispatch(moveDown());
     }
   };
