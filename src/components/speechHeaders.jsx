@@ -3,7 +3,7 @@ import { useCallback } from "react";
 
 import { useSelector, useDispatch } from "react-redux";
 
-import { closeFlyout, setSpeeches } from "../slices/flowSlice";
+import { closeFlyout, moveDown, setSpeeches } from "../slices/flowSlice";
 
 export default function SpeechHeaders(props) {
   const editing = useSelector((state) => state.flow.editingMode);
@@ -30,7 +30,7 @@ export default function SpeechHeaders(props) {
   }, []);
 
   const setHeaders = (evt) => {
-    if (window.status === "speech-label" && evt.code === "Enter") {
+    if (status.startsWith('speechHeader') && evt.code === "Enter") {
       evt.stopPropagation();
       evt.preventDefault();
 
@@ -48,6 +48,8 @@ export default function SpeechHeaders(props) {
         },
       );
       dispatch(setSpeeches(speeches));
+      document.getElementById(status).innerHTML = "";
+      dispatch(moveDown());
     }
   };
 
@@ -61,6 +63,7 @@ export default function SpeechHeaders(props) {
         }}
         className={`speechLabel ${moderators.indexOf(speech.id) !== -1 ? "moderatorSpeech" : ""}`}
         contentEditable={editing && status === `speechHeader${idx}`}
+        id={`speechHeader${idx}`}
         data-speechid={speech.id}
         onClick={setStatus}
         onKeyDown={setHeaders}
@@ -78,7 +81,7 @@ export default function SpeechHeaders(props) {
   return (
     <div
       id="speeches"
-      style={{ width: `${width}px` }}
+      style={{ width: `${window.innerWidth - 10}px` }}
       onClick={closeFlyoutEvent}
     >
       {speechNav}

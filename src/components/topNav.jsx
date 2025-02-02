@@ -10,12 +10,9 @@ import {
   toggleFlyoutOpen,
   toggleEditingMode,
   setSelectedTags,
+  setInitialStateForRound,
 } from "../slices/flowSlice";
 
-import Flyout from "./flyout";
-
-import logoUrl from "../../logo.png";
-import pencilUrl from "../../pencil.svg";
 import downloadUrl from "../../download.svg";
 
 export default function TopNav() {
@@ -59,53 +56,63 @@ export default function TopNav() {
     anchorEl.click();
   };
 
+  const uploadHandler = async (event) => {
+    const file = event.target.files[0];
+
+    if (!file) return;
+
+    try {
+      const text = await file.text();
+      dispatch(setInitialStateForRound(JSON.parse(text)));
+    } catch (err) {
+      console.log('Failed to parse JSON file. Please ensure the file contains valid JSON.', err);
+    }
+  };
+
   return (
     <div>
-      <div>
-        <div id="speakers" className={`${editingMode ? "editing" : ""}`}>
-          <div id="nonFlyout">
-            <div id="header">
-              <div id="debateTitleParent">
-                <div id="debateTitle">
+      <div id="speakers" className={`${editingMode ? "editing" : ""}`}>
+        <div id="nonFlyout">
+          <div id="header">
+            <div id="debateTitleParent">
+              <div id="debateTitle">
+                {title &&
                   <span>{title}</span>
-                  <br />
-                  <a href={url} id="source-tag">
-                    {source}, {date}
-                  </a>
-                </div>
-              </div>
-              <div id="navParent">
-                <div id="editToggle">
-                  <label>
-                    <Toggle
-                      defaultChecked={editingMode}
-                      icons={{
-                        checked: <img src={pencilUrl} className="toggleIcon" />,
-                        unchecked: (
-                          <img src={pencilUrl} className="toggleIcon" />
-                        ),
-                      }}
-                      onChange={toggleEditing}
-                    />
-                  </label>
-                  {editingMode && (
-                    <img
-                      src={downloadUrl}
-                      id="download"
-                      onClick={downloadHandler}
-                    />
-                  )}
-                  <Multiselect
-                    data={allTags}
-                    placeholder="filter tags"
-                    value={selectedTags}
-                    onChange={onSetSelectedTags}
-                  />
-                </div>
+                }
+                {(source || date) &&
+                  <div>
+                    <br />
+                    <a href={url} id="source-tag">
+                      {source}, {date}
+                    </a>
+                  </div>
+                }
               </div>
             </div>
           </div>
         </div>
+      </div>
+      <div id="navParent">
+        <img
+          src={downloadUrl}
+          id="download"
+          onClick={downloadHandler}
+        />
+        <label id="upload-label">
+          <img src={downloadUrl} />
+          <input
+            type="file"
+            id="upload"
+            accept="application/json"
+            onChange={uploadHandler}
+          />
+        </label>
+        <Multiselect
+          data={allTags}
+          placeholder="filter tags"
+          value={selectedTags}
+          onChange={onSetSelectedTags}
+        />
       </div>
     </div>
   );

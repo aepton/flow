@@ -350,7 +350,6 @@ export default function Home(props) {
         >
           <Panel position="top-left"></Panel>
         </ReactFlow>
-        <div id="navHelp">↑/↓ navigate</div>
       </div>
     </div>
   );

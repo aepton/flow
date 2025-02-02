@@ -82,7 +82,6 @@ export const flowSlice = createSlice({
       if (state.cellId > 0) {
         state.shouldCenterOnActive = true;
       } else {
-        console.log('editing speech label!');
         state.status = `speechHeader${state.speechId}`;
       }
       state.cellId -= 1;
