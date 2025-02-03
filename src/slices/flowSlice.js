@@ -84,7 +84,9 @@ export const flowSlice = createSlice({
       } else {
         state.status = `speechHeader${state.speechId}`;
       }
-      state.cellId -= 1;
+      if (state.cellId >= 0) {
+        state.cellId -= 1;
+      }
     },
     moveDown: (state) => {
       state.status = 'node';
@@ -94,6 +96,7 @@ export const flowSlice = createSlice({
       }
     },
     moveLeft: (state) => {
+      state.status = 'node';
       if (state.speechId > 0) {
         state.speechId -= 1;
       }
@@ -103,6 +106,7 @@ export const flowSlice = createSlice({
       state.shouldCenterOnActive = true;
     },
     moveRight: (state) => {
+      state.status = 'node';
       state.speechId += 1;
       if (state.cards.length <= state.speechId) {
         if (state.cards[state.speechId - 1].length > 0) {

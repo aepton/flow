@@ -21,6 +21,9 @@ export default function TopNav() {
   const editingMode = useSelector((state) => state.flow.editingMode);
   const selectedTags = useSelector((state) => state.flow.selectedTags);
   const source = useSelector((state) => state.flow.source);
+  const status = useSelector((state) => state.flow.status);
+  const cellId = useSelector((state) => state.flow.cellId);
+  const speechId = useSelector((state) => state.flow.speechId);
   const tags = useSelector((state) => state.flow.tags);
   const title = useSelector((state) => state.flow.title);
   const url = useSelector((state) => state.flow.url);
@@ -113,6 +116,7 @@ export default function TopNav() {
           value={selectedTags}
           onChange={onSetSelectedTags}
         />
+        <p>{status} - {speechId}, {cellId}</p>
       </div>
     </div>
   );
