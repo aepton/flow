@@ -34,21 +34,7 @@ export default function SpeechHeaders(props) {
       evt.stopPropagation();
       evt.preventDefault();
 
-      const speeches = [];
-      Array.from(document.getElementsByClassName("speechLabel")).forEach(
-        (speech) => {
-          speeches.push({
-            label: speech.innerText
-              .replace("<br>", "")
-              .replace(/[\n\r]+/g, "")
-              .replace(moderatorTag, "")
-              .trim(),
-            id: speech.getAttribute("data-speechid"),
-          });
-        },
-      );
-      dispatch(setSpeeches(speeches));
-      // document.getElementById(status).innerHTML = "";
+      dispatch(setSpeeches());
       dispatch(moveDown());
     }
   };
@@ -62,16 +48,15 @@ export default function SpeechHeaders(props) {
           width: props.columnWidth,
         }}
         className={`speechLabel ${moderators.indexOf(speech.id) !== -1 ? "moderatorSpeech" : ""}`}
-        contentEditable={editing && status === `speechHeader${idx}`}
+        contentEditable={status === `speechHeader${idx}`}
         id={`speechHeader${idx}`}
         data-speechid={speech.id}
         onClick={setStatus}
         onKeyDown={setHeaders}
         key={`speechNav${idx}`}
-        ref={editing && status === `speechHeader${idx}` ? autofocusInput : null}
+        ref={status === `speechHeader${idx}` ? autofocusInput : null}
+        dangerouslySetInnerHTML={{ __html: `${speech.label}<br>${moderators.indexOf(speech.id) !== -1 ? moderatorTag : ""}` }}
       >
-        {speech.label}
-        {moderators.indexOf(speech.id) !== -1 ? moderatorTag : ""}
       </span>,
     );
   });

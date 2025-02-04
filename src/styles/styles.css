@@ -219,7 +219,6 @@ h2 {
 
 .argument-text {
   cursor: text;
-  max-width: 45%;
   overflow: hidden;
 
   transform: translateZ(0) translateY(10px);

@@ -170,7 +170,21 @@ export const flowSlice = createSlice({
       state.setShouldCenterOnActive = action.payload;
     },
     setSpeeches: (state, action) => {
-      state.speeches = action.payload;
+      state.speeches = [];
+
+      const moderatorTag = " (moderator)";
+      Array.from(document.getElementsByClassName("speechLabel")).forEach(
+        (speech) => {
+          state.speeches.push({
+            label: speech.innerText
+              .replace("<br>", "")
+              .replace(/[\n\r]+/g, "")
+              .replace(moderatorTag, "")
+              .trim(),
+            id: speech.getAttribute("data-speechid"),
+          });
+        },
+      );
     },
     setStatus: (state, action) => {
       window.status = action.payload;

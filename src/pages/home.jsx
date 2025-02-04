@@ -26,7 +26,7 @@ import SpeechHeaders from "../components/speechHeaders";
 import TextEntryNode from "../components/textEntryNode";
 import TopNav from "../components/topNav";
 
-import useKeyPress from "../utils/movement";
+import handleKeyPresses from "../utils/movement";
 
 import dataLoader from "../components/dataLoader";
 
@@ -62,26 +62,7 @@ export default function Home(props) {
 
   const dispatch = useDispatch();
 
-  const downPress = useKeyPress("ArrowDown");
-  const upPress = useKeyPress("ArrowUp");
-  const leftPress = useKeyPress("ArrowLeft");
-  const rightPress = useKeyPress("ArrowRight");
-  const enterPress = useKeyPress("Enter");
-  const tagShortcut = useKeyPress("t");
-
-  if (downPress) {
-    if (status == "navigating" && cards.length > props.selectedCard) {
-      props.setSelectedCard(props.selectedCard + 1);
-    }
-  } else if (upPress) {
-    if (status == "navigating" && props.selectedCard > -1) {
-      props.setSelectedCard(props.selectedCard - 1);
-    }
-  } else if (leftPress) {
-  } else if (rightPress) {
-  } else if (tagShortcut) {
-  } else if (enterPress) {
-  }
+  handleKeyPresses();
 
   useEffect(() => {
     dataLoader(props.round, (round) =>
@@ -90,26 +71,11 @@ export default function Home(props) {
     return () => {};
   }, [dispatch]);
 
-  // const speeches = [];
-  /*
-  if (cards.map) {
-    cards.map((card) => {
-      if (speeches.indexOf(card.speech) == -1) {
-        speeches.push(card.speech);
-      }
-    });
-  }
-
-  if (speeches.length === 0) {
-    speeches.push(0);
-  }
-  */
-
   const columnPadding = 50;
   const windowWidth = window.innerWidth - 10;
   const columnWidth = Math.min(
     (windowWidth - columnPadding * (speeches.length - 1)) / speeches.length,
-    windowWidth / 2.5,
+    200,
   );
   const renderedNodes = [];
   let yPosition = 0;
@@ -130,6 +96,7 @@ export default function Home(props) {
   let activeNode = null;
   const allTags = Object.keys(tags);
   let dirty = false;
+
   if (cards.forEach) {
     const generateEntryNode = (speechId, cardsLength) => ({
       id: "card-entry-" + speechId,
