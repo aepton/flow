@@ -8,7 +8,7 @@ export default () => {
   return (
     <Switch>
       <Route>
-        <Home round={params.get("round")} />
+        <Home round={params.get("round")} debug={params.get("debug")} />
       </Route>
     </Switch>
   );

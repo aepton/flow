@@ -13,6 +13,7 @@ to this section's matching END comment to see page-specific styles.
   --color-primary: #afece0;
   --wrapper-height: 85vh;
   --image-max-width: 320px;
+  --fun-color: #0ff;
 }
 
 /* Basic page style resets */
@@ -130,11 +131,11 @@ h1 {
 }
 
 .react-flow__handle {
-  background-color: rgba(255, 255, 255, 0);
   border-radius: 0;
-  width: 50px;
-  height: 20px;
+  width: 100%;
+  height: 100%;
   border: none;
+  background-color: var(--fun-color);
 }
 
 .react-flow {
@@ -142,8 +143,8 @@ h1 {
 }
 
 .edit-handle:hover {
-  animation: fadeIn 1s;
-  background-color: #000;
+  /* animation: fadeIn 1s; */
+  background-color: var(--fun-color);
 }
 
 .noedit-handle {
@@ -161,6 +162,12 @@ h2 {
   max-width: 45%;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
   */
+
+  border-radius: 15px;  /* Rounds all corners */
+  border: 3px solid var(--fun-color);
+  box-shadow: 0 0 5px var(--fun-color),
+              0 0 10px var(--fun-color);
+  padding: 10px;
 }
 
 @keyframes emergeFromSurface {
@@ -248,6 +255,12 @@ h2 {
   border: 1px solid rgba(204, 204, 204, 0.3);
   width: fit-content;
   min-width: 20%;
+
+  border-radius: 15px;  /* Rounds all corners */
+  border: 3px solid var(--fun-color);
+  box-shadow: 0 0 5px var(--fun-color),
+              0 0 10px var(--fun-color);
+  padding: 10px;
 }
 
 .selected {

@@ -19,6 +19,7 @@ import rightUrl from "../../right.svg";
 import trashUrl from "../../trash.svg";
 
 function ArgumentNode({ data }) {
+  console.log('got data', data);
   const dispatch = useDispatch();
 
   const onMultiselectChange = useCallback((value, event) => {
@@ -86,21 +87,16 @@ function ArgumentNode({ data }) {
   }, []);
 
   let className = `argument-node ${data.active ? "active-node" : ""}`;
-  let handleClass = data.editingMode ? "edit-handle" : "noedit-handle";
+  let handleClass = data.editingMode || true ? "edit-handle" : "noedit-handle";
 
   return (
     <div className={className}>
-      {false && (
-        <Handle
+      <Handle
           type="target"
-          position={Position.Top}
-          style={{ background: "black" }}
         />
-      )}
       {data.sourceHandle && (
         <Handle
           type="source"
-          position={Position.Bottom}
           className={handleClass}
         />
       )}

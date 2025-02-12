@@ -15,7 +15,7 @@ import {
 
 import downloadUrl from "../../download.svg";
 
-export default function TopNav() {
+export default function TopNav(props) {
   const flow = useSelector((state) => state.flow);
   const date = useSelector((state) => state.flow.date);
   const editingMode = useSelector((state) => state.flow.editingMode);
@@ -72,6 +72,8 @@ export default function TopNav() {
     }
   };
 
+  console.log(props, props.debug);
+
   return (
     <div>
       <div id="speakers" className={`${editingMode ? "editing" : ""}`}>
@@ -116,7 +118,9 @@ export default function TopNav() {
           value={selectedTags}
           onChange={onSetSelectedTags}
         />
+        {((props.debug || props.debug === '') && (props.debug != 'false')) &&
         <p>{status} - {speechId}, {cellId}</p>
+        }
       </div>
     </div>
   );

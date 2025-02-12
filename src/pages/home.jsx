@@ -15,6 +15,7 @@ import {
 } from "../slices/flowSlice";
 
 import ReactFlow, { Panel } from "reactflow";
+// import { useReactFlow } from "reactflow";
 import { Helmet } from "react-helmet-async";
 
 import { Converter } from "showdown";
@@ -52,13 +53,16 @@ export default function Home(props) {
   const edges = useSelector((state) => state.flow.edges);
   const editingMode = useSelector((state) => state.flow.editingMode);
   const selectedTags = useSelector((state) => state.flow.selectedTags);
-  const shouldCenterOnActive = useSelector(
+  /* const shouldCenterOnActive = useSelector(
     (state) => state.flow.shouldCenterOnActive,
-  );
+  );*/
+  const shouldCenterOnActive = true;
   const speeches = useSelector((state) => state.flow.speeches);
   const status = useSelector((state) => state.flow.status);
   const tags = useSelector((state) => state.flow.tags);
   const title = useSelector((state) => state.flow.title);
+
+  // const { setCenter, getNode } = useReactFlow();
 
   const dispatch = useDispatch();
 
@@ -80,7 +84,9 @@ export default function Home(props) {
   const renderedNodes = [];
   let yPosition = 0;
   const yPadding = 30;
-  const recenterPadding = 150;
+  const recenterPadding = window.innerHeight / 1;
+  console.log(recenterPadding);
+  
 
   const clusters = {};
   edges.forEach((edge) => {
@@ -179,6 +185,12 @@ export default function Home(props) {
   
           if (shouldCenterOnActive && active) {
             recenterY = yPosition - recenterPadding;
+            /* setCenter(
+              node.position.x + node.width / 2,
+              node.position.y + node.height / 2,
+              // { zoom: 1.5, duration: 800 }  // smooth animation
+            );
+            */
           }
   
           yPosition += (card.height || 0) + yPadding;
@@ -278,13 +290,36 @@ export default function Home(props) {
     dispatch(closeFlyout());
   };
 
+  const defaultEdgeOptions = {
+    // Reduce the scroll speed during edge creation
+    connectionMode: 'loose',
+    autoPanOnConnect: false,
+    autoPanOnConnectSpeed: 0.5, // Default is 1, lower numbers = slower scroll
+    autoPanOnConnectDistance: 50 // Distance from edge before auto-pan starts
+  };
+
+  const colors = [
+    '#ff9ecd',  // muted pink
+    '#98e0e8',  // soft cyan
+    '#a6e8b0',  // pale mint
+    '#c5a3e8',  // dusty lavender
+    '#ffb5a3',  // peachy coral
+    '#8eb5ff',  // powder blue
+    '#ffe5a3',  // pale yellow
+    '#ffcce6',  // baby pink
+    '#a3e8d5',  // soft teal
+    '#ff9eb2'   // faded rose
+  ];
+  const randomColor = colors[Math.floor(Math.random() * colors.length)];
+  document.documentElement.style.setProperty('--fun-color', randomColor);
+
   return (
     <div>
       <Helmet>
         <title>Flow: {title}</title>
         <link rel="icon" href={faviconUrl} />
       </Helmet>
-      <TopNav />
+      <TopNav debug={props.debug} />
       <SpeechHeaders columnWidth={columnWidth} columnPadding={columnPadding} />
       <div
         id="flowCanvas"
@@ -314,6 +349,7 @@ export default function Home(props) {
           nodesConnectable={editingMode}
           nodesFocusable={editingMode}
           onClick={closeFlyoutEvent}
+          defaultEdgeOptions={defaultEdgeOptions}
         >
           <Panel position="top-left"></Panel>
         </ReactFlow>
