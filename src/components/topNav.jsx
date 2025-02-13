@@ -102,8 +102,9 @@ export default function TopNav(props) {
           src={downloadUrl}
           id="download"
           onClick={downloadHandler}
+          title="Download this round"
         />
-        <label id="upload-label">
+        <label id="upload-label" title="Upload a round">
           <img src={downloadUrl} />
           <input
             type="file"
@@ -114,6 +115,7 @@ export default function TopNav(props) {
         </label>
         <Multiselect
           data={allTags}
+          dropUp
           placeholder="filter tags"
           value={selectedTags}
           onChange={onSetSelectedTags}

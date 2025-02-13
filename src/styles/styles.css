@@ -233,6 +233,7 @@ h2 {
   position: relative;
   left: 15px;
   cursor: pointer;
+  width: 40%;
 }
 
 #upload {
@@ -376,7 +377,7 @@ h2 {
 #speeches {
   height: 2rem;
   position: sticky;
-  top: 64px;
+  top: 0px;
   left: 0px;
   box-shadow: 5px 10px 10px #ccc;
   z-index: 9999 !important;
@@ -475,6 +476,9 @@ main.wrapper {
   position: fixed;
   right: 0;
   bottom: 0;
+  background: var(--fun-color-faint);
+  border-radius: 15px;
+  margin: 5px;
 }
 
 .react-toggle {
