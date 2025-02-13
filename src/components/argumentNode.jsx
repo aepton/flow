@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { Handle, Position } from "reactflow";
 import Multiselect from "react-widgets/Multiselect";
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import {
   editCardText,
@@ -21,6 +21,7 @@ import trashUrl from "../../trash.svg";
 function ArgumentNode({ data }) {
   console.log('got data', data);
   const dispatch = useDispatch();
+  const status = useSelector((state) => state.flow.status);
 
   const onMultiselectChange = useCallback((value, event) => {
     console.log("change", value, event);
@@ -134,7 +135,7 @@ function ArgumentNode({ data }) {
           onClick={collapseExchange}
         />
       )}
-      {data.active && data.editingMode && (
+      {status === `editing${data.id}` && (
         <div>
           <div
             className="text-entry-node"
@@ -156,7 +157,7 @@ function ArgumentNode({ data }) {
           />
         </div>
       )}
-      {(!data.active || !data.editingMode) && (
+      {(!data.active || status !== `editing${data.id}`) && (
         <div>
           <div
             className="argument-text"

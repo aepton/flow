@@ -5,6 +5,7 @@ import { createStore } from "redux";
 import App from "./app.jsx";
 import { HelmetProvider } from "react-helmet-async";
 import store from "./store";
+import setColorScheme from "./utils/colors";
 
 /**
  * Root of react site
@@ -14,6 +15,9 @@ import store from "./store";
  */
 
 // Render the site https://reactjs.org/docs/react-dom.html#render
+
+setColorScheme();
+
 ReactDOM.render(
   <React.StrictMode>
     <HelmetProvider>
