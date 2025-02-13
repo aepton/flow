@@ -180,14 +180,16 @@ h2 {
   overflow: hidden;
 
   transform: translateZ(0) translateY(10px);
-  opacity: 0;
+  /* opacity: 0; */
   /* box-shadow: 0 0 0 rgba(0,0,0,0); */
 
   /* Animation properties */
+  /*
   animation: emergeFromSurface 0.1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
   transform-style: preserve-3d;
   perspective: 1000px;
   backface-visibility: hidden;
+  */
 
   width: fit-content;
   padding: 10px;
@@ -195,22 +197,26 @@ h2 {
 
 /* Optional hover state for interactive elements */
 .argument-text:hover {
+  /*
   transform: translateZ(30px) translateY(-5px);
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
   transition: all 0.3s ease;
+  */
 }
 
 .active-node {
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-  animation: fadeIn 0.1s;
+  /* animation: fadeIn 0.1s; */
   border: 1px solid rgba(204, 204, 204, 0.3);
+  /*
   width: fit-content;
   min-width: 20%;
+  */
 
   border-radius: 15px;  /* Rounds all corners */
   box-shadow: 0 0 5px var(--fun-color),
               0 0 10px var(--fun-color);
-  padding: 10px;
+  /* padding: 10px; */
   background-color: var(--fun-color-faint);
 }
 
