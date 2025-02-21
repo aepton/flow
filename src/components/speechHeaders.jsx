@@ -69,7 +69,7 @@ export default function SpeechHeaders(props) {
     return (
         <div
             id="speeches"
-            style={{ width: `${window.innerWidth - 10}px` }}
+            style={{ width: `${window.innerWidth}px` }}
             onClick={closeFlyoutEvent}
         >
             {speechNav}

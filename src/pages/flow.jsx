@@ -44,6 +44,9 @@ const nodeTypes = {
 };
 
 export default function Flow(props) {
+    const cards = useSelector((state) => state.flow.cards);
+    const cellId = useSelector((state) => state.flow.cellId);
+    const speechId = useSelector((state) => state.flow.speechId);
     const editingMode = useSelector((state) => state.flow.editingMode);
     const selectedTags = useSelector((state) => state.flow.selectedTags);
     const shouldCenterOnActive = useSelector(
@@ -88,7 +91,7 @@ export default function Flow(props) {
         window.showdown = new Converter();
     };
 
-    const onNodeClick = (event, node) => {
+    const onNodeClick = (event, node, cards) => {
         let nodeIdx = -1;
         cards.forEach((card, cardIdx) => {
             const tempId = `card_${card.id}`;
@@ -120,8 +123,6 @@ export default function Flow(props) {
         autoPanOnConnectDistance: 50, // Distance from edge before auto-pan starts
     };
 
-    console.log(renderedNodes, renderedEdges, dirty);
-
     return (
         <div>
             <Helmet>
@@ -147,7 +148,7 @@ export default function Flow(props) {
                     onEdgesChange={onEdgesChange}
                     onConnect={onConnect}
                     onInit={onInit}
-                    onNodeClick={onNodeClick}
+                    onNodeClick={(event, node) => onNodeClick(event, node, cards)}
                     onEdgeClick={onEdgeClick}
                     onlyRenderVisibleElements={false}
                     preventScrolling={false}

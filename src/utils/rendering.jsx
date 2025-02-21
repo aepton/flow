@@ -105,7 +105,6 @@ export function renderCards(
 
                 if (active) {
                     activeNode = node;
-                    yPosition += yPadding * 2;
                 } else {
                     renderedNodes.push(node);
                 }
@@ -116,22 +115,22 @@ export function renderCards(
 
                 yPosition += (card.height || 0) + yPadding;
             }
-
-            if (
-                editingMode &&
-                cellId == cards[speechCardIdx].length &&
-                speechId == speechCardIdx
-            ) {
-                renderedNodes.push(
-                    generateEntryNode(
-                        speechCardIdx,
-                        cards[speechCardIdx].length,
-                        columnWidth,
-                        columnPadding
-                    )
-                );
-            }
         });
+
+        if (
+            editingMode &&
+            cellId == cards[speechCardIdx].length &&
+            speechId == speechCardIdx
+        ) {
+            renderedNodes.push(
+                generateEntryNode(
+                    speechCardIdx,
+                    cards[speechCardIdx].length,
+                    columnWidth,
+                    columnPadding
+                )
+            );
+        }
     });
 
     if (cards[0].length === 0) {
