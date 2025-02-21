@@ -19,12 +19,12 @@ import setColorScheme from "./utils/colors";
 setColorScheme();
 
 ReactDOM.render(
-  <React.StrictMode>
-    <HelmetProvider>
-      <Provider store={store}>
-        <App />
-      </Provider>
-    </HelmetProvider>
-  </React.StrictMode>,
-  document.getElementById("root"),
+    <React.StrictMode>
+        <HelmetProvider>
+            <Provider store={store}>
+                <App />
+            </Provider>
+        </HelmetProvider>
+    </React.StrictMode>,
+    document.getElementById("root")
 );
