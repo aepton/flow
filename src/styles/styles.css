@@ -243,6 +243,10 @@ body {
   font-size: 1rem;
 }
 
+[contenteditable="true"]:focus {
+  outline: none;
+}
+
 .moderatorSpeech {
   font-size: 0.9rem;
   color: #ccc;
