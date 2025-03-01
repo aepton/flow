@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
-import { addCardAfter, addItemToTag } from "../slices/flowSlice";
+import { addCardAfter, addItemToTag, createTag } from "../slices/flowSlice";
 import { generateTagsFromText } from "../utils/tagging";
 
 export function TextEntryNode({ data }) {
@@ -21,6 +21,7 @@ export function TextEntryNode({ data }) {
 
                 const tags = await generateTagsFromText(val);
                 tags.forEach((tag) => {
+                    dispatch(createTag({ tag }));
                     dispatch(addItemToTag({ item: clusterId, tag }));
                 });
 

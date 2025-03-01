@@ -53,11 +53,12 @@ export function renderCards(
             }
 
             const cardTags = [];
-            allTags.forEach((key) => {
+            Object.keys(tags).forEach((key) => {
                 if (tags[key].indexOf(clusterId) != -1) {
                     cardTags.push(key);
                 }
             });
+            console.log(tags, cardTags);
 
             let isSelectedTag = false;
             if (selectedTags.length === 0) {

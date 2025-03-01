@@ -7,6 +7,7 @@ import {
     closeFlyout,
     removeEdge,
     setShouldCenterOnActive,
+    setSelectedNode
 } from "./slices/flowSlice";
 
 import { loadLocalStorage } from "./utils/storage";
@@ -88,12 +89,15 @@ export default function Flow(props) {
 
     const onNodeClick = (event, node, cards) => {
         let nodeIdx = -1;
-        cards.forEach((card, cardIdx) => {
-            const tempId = `card_${card.id}`;
-            if (tempId === node.id) {
-                nodeIdx = cardIdx;
-            }
+        cards.forEach((speech) => {
+            speech.forEach((card, cardIdx) => {
+                const tempId = `card_${card.id}`;
+                if (tempId === node.id) {
+                    nodeIdx = cardIdx;
+                }
+            });
         });
+        dispatch(setSelectedNode(nodeIdx));
     };
 
     const onEdgeClick = (event, edge) => {

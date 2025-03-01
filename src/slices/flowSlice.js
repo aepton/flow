@@ -33,7 +33,7 @@ export const flowSlice = createSlice({
         speechNodes: [],
         speechYPosition: 0,
         status: "node",
-        tags: [],
+        tags: {},
         title: "",
         url: null,
     },
@@ -224,11 +224,14 @@ export const flowSlice = createSlice({
         },
         removeTagFromItem: (state, action) => {
             const { item, tag } = action.payload;
-            state.tags[tag].splice(state.tags[tag].indexOf(item));
+            if (Object.keys(state.tags).indexOf(tag) !== -1) {
+                state.tags[tag].splice(state.tags[tag].indexOf(item));
+            }
         },
         createTag: (state, action) => {
-            if (Object.keys(state.tags).indexOf(action.payload) == -1) {
-                state.tags[action.payload] = [];
+            const { tag } = action.payload;
+            if (Object.keys(state.tags).indexOf(tag) == -1) {
+                state.tags[tag] = [];
             }
         },
         setInitialStateForRound: (state, action) => {

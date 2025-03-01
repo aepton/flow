@@ -11,6 +11,7 @@ import {
     moveDown,
     removeCard,
     setSelectedNode,
+    setStatus
 } from "../slices/flowSlice";
 
 import leftUrl from "../../left.svg";
@@ -50,6 +51,7 @@ function ArgumentNode({ data }) {
 
     const onClick = () => {
         dispatch(setSelectedNode(data.nodeIdx));
+        dispatch(setStatus(`editing${data.id}`));
         window.status = "node";
     };
 
