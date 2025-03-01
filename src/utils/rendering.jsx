@@ -19,7 +19,9 @@ export function renderCards(
     shouldCenterOnActive
 ) {
     const cards = useSelector((state) => state.flow.cards);
+    const cardIdx = useSelector((state) => state.flow.cardIdx);
     const cellId = useSelector((state) => state.flow.cellId);
+    const shiftPressed = useSelector((state) => state.flow.shiftPressed);
     const speechId = useSelector((state) => state.flow.speechId);
     const edges = useSelector((state) => state.flow.edges);
     const tags = useSelector((state) => state.flow.tags);
@@ -69,6 +71,8 @@ export function renderCards(
                 });
             }
 
+            const isShiftBasisTag = card.id === shiftPressed;
+
             if (isSelectedTag) {
                 const node = {
                     id: cardId,
@@ -80,6 +84,7 @@ export function renderCards(
                     },
                     data: {
                         text: card.text,
+                        shiftBasis: isShiftBasisTag,
                         active,
                         editingMode,
                         sourceHandle: true,
@@ -100,7 +105,13 @@ export function renderCards(
                     },
                     selectable: editingMode,
                     type: "argument",
-                    style: { width: columnWidth, opacity: visible ? 1 : 0 },
+                    style: {
+                        width: columnWidth,
+                        opacity: visible ? 1 : 0,
+                        border: isShiftBasisTag
+                            ? "2px dashed var(--fun-color)"
+                            : "none",
+                    },
                 };
 
                 if (active) {
@@ -146,6 +157,8 @@ export function renderCards(
 
 export function renderEdges(dirty) {
     const edges = useSelector((state) => state.flow.edges);
+    const provisionalEdge = useSelector((state) => state.flow.provisionalEdge);
+
     const dispatch = useDispatch();
     const renderedEdges = [];
 
@@ -170,13 +183,27 @@ export function renderEdges(dirty) {
                 source: edge.source,
                 target: edge.target,
                 style: {
-                    stroke: "#dc2626",
+                    stroke: "var(--fun-color)",
                     strokeWidth: 3,
-                    strokeDasharray: "5,5",
                 },
-                animated: true,
+                type: "smart",
             });
         });
     }
+    if (provisionalEdge) {
+        renderedEdges.push({
+            id: "edge_provisional",
+            source: provisionalEdge.source,
+            target: provisionalEdge.target,
+            style: {
+                stroke: "var(--fun-color)",
+                strokeWidth: 3,
+                strokeDasharray: "5,5",
+            },
+            animated: true,
+            type: "smart",
+        });
+    }
+
     return renderedEdges;
 }

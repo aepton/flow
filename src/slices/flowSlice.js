@@ -1,9 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+function setProvisionalEdge(state) {
+    if (state.shiftPressed) {
+        state.provisionalEdge = {
+            source: `card_${state.shiftPressed}`,
+            target: `card_${state.cards[state.speechId][state.cellId].id}`,
+        };
+    }
+}
+
 export const flowSlice = createSlice({
     name: "flow",
     initialState: {
         cards: [[]],
+        cardIdx: 0,
         cellId: 0,
         clusters: {},
         date: null,
@@ -12,8 +22,10 @@ export const flowSlice = createSlice({
         flyoutOpen: false,
         instance: null,
         moderators: [],
+        provisionalEdge: null,
         selectedNode: null,
         selectedTags: [],
+        shiftPressed: null,
         shouldCenterOnActive: false,
         source: null,
         speeches: [{ label: "", id: 0 }],
@@ -28,39 +40,28 @@ export const flowSlice = createSlice({
     reducers: {
         addCardAfter: (state, action) => {
             const card = {
-                id: crypto.randomUUID(),
+                id: action.payload.cardId,
+                cardIdx: state.cardIdx,
                 speech: action.payload.speechId,
                 text: action.payload.card,
             };
             if (state.cards[state.speechId].length === 0) {
                 state.cards[state.speechId].splice(0, 0, card);
                 state.cellId = 1;
-                return;
+            } else {
+                state.cards[state.speechId].push(card);
+                state.cellId = state.cards[state.speechId].length;
             }
-
-            /*
-      let existingIdx = -1;
-      let existingSpeech = null;
-      state.cards.forEach((c, idx) => {
-        if (c.id === action.payload) {
-          existingIdx = idx;
-          existingSpeech = c.speech;
-        }
-      });
-      if (!existingSpeech) {
-        if (state.cards[-1]) {
-          existingSpeech = state.cards[-1].speech;
-        }
-      }
-      */
-            // const newIdx = existingIdx + 1;
-            // state.cards.splice(newIdx, 0, card);
-            state.cards[state.speechId].push(card);
-            state.cellId = state.cards[state.speechId].length;
+            state.cardIdx += 1;
         },
         addEdge: (state, action) => {
-            console.log("adding edge", state, action);
             state.edges.push(action.payload);
+        },
+        confirmEdge: (state, action) => {
+            state.edges.push(state.provisionalEdge);
+            state.provisionalEdge = null;
+            state.shiftPressed = null;
+            window.shiftPressed = state.shiftPressed;
         },
         addSpeech: (state, action) => {
             state.speeches.push(action.payload);
@@ -88,6 +89,7 @@ export const flowSlice = createSlice({
             if (state.cellId >= 0) {
                 state.cellId -= 1;
             }
+            setProvisionalEdge(state);
         },
         moveDown: (state) => {
             state.status = "node";
@@ -95,6 +97,7 @@ export const flowSlice = createSlice({
                 state.cellId += 1;
                 state.shouldCenterOnActive = true;
             }
+            setProvisionalEdge(state);
         },
         moveLeft: (state) => {
             state.status = "node";
@@ -105,6 +108,7 @@ export const flowSlice = createSlice({
                 state.cellId = state.cards[state.speechId].length;
             }
             state.shouldCenterOnActive = true;
+            setProvisionalEdge(state);
         },
         moveRight: (state) => {
             state.status = "node";
@@ -126,6 +130,7 @@ export const flowSlice = createSlice({
                 state.cellId
             );
             state.shouldCenterOnActive = true;
+            setProvisionalEdge(state);
         },
         removeEdge: (state, action) => {
             state.edges = state.edges.filter(
@@ -167,6 +172,16 @@ export const flowSlice = createSlice({
         setSelectedTags: (state, action) => {
             state.selectedTags = action.payload;
         },
+        setShiftPressed: (state, action) => {
+            if (action.payload === true) {
+                state.shiftPressed =
+                    state.cards[state.speechId][state.cellId].id;
+            } else {
+                state.shiftPressed = null;
+                state.provisionalEdge = null;
+            }
+            window.shiftPressed = state.shiftPressed;
+        },
         setSpeechNodes: (state, action) => {
             state.speechNodes = action.payload;
         },
@@ -203,6 +218,7 @@ export const flowSlice = createSlice({
             }
         },
         addItemToTag: (state, action) => {
+            console.log(action);
             const { item, tag } = action.payload;
             state.tags[tag].push(item);
         },
@@ -216,15 +232,11 @@ export const flowSlice = createSlice({
             }
         },
         setInitialStateForRound: (state, action) => {
-            state.cards = action.payload.cards;
-            state.date = action.payload.date;
-            state.edges = action.payload.edges;
-            state.moderators = action.payload.moderators;
-            state.source = action.payload.source;
-            state.speeches = action.payload.speeches;
-            state.tags = action.payload.tags;
-            state.title = action.payload.title;
-            state.url = action.payload.url;
+            if (action.payload === null) {
+                return;
+            }
+
+            state = { ...state, ...action.payload };
 
             state.cellId = 0;
             state.speechId = 0;
@@ -276,6 +288,7 @@ export const flowSlice = createSlice({
 export const {
     addCardAfter,
     addEdge,
+    confirmEdge,
     addItemToTag,
     addSpeech,
     closeFlyout,
@@ -297,6 +310,7 @@ export const {
     setInstance,
     setSelectedNode,
     setSelectedTags,
+    setShiftPressed,
     setShouldCenterOnActive,
     setSpeeches,
     setSpeechNodes,

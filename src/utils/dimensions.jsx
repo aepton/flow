@@ -1,8 +1,8 @@
 export function generateDimensions(speeches) {
     const dimensions = {
-        columnPadding: 50,
+        columnPadding: 200,
         windowWidth: window.innerWidth - 10,
-        yPadding: 30,
+        yPadding: 150,
         recenterPadding: window.innerHeight / 1,
     };
     dimensions.columnWidth = Math.min(

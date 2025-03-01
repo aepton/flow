@@ -1,0 +1,1 @@
+Generate some tags that summarize the topics being discussed by the text, as well as the techniques being employed by the text's author, and return them as a raw json list of strings, so that the list can be used directly by code - do not return anything but the JSON list: \"${text}\"

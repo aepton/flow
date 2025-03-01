@@ -1,6 +1,7 @@
 import * as React from "react";
+import { ReactFlowProvider } from '@xyflow/react'
 import { Switch, Route } from "wouter";
-import Flow from "../pages/flow";
+import Flow from "../flow";
 
 export default () => {
     const params = new URLSearchParams(window.location.search);
@@ -8,7 +9,7 @@ export default () => {
     return (
         <Switch>
             <Route>
-                <Flow round={params.get("round")} debug={params.get("debug")} />
+                    
             </Route>
         </Switch>
     );

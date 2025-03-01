@@ -1,6 +1,7 @@
 import { useCallback } from "react";
-import { Handle, Position } from "reactflow";
+import { Handle, Position } from "@xyflow/react";
 import Multiselect from "react-widgets/Multiselect";
+import { Converter } from "showdown";
 
 import { useDispatch, useSelector } from "react-redux";
 
@@ -21,6 +22,10 @@ import trashUrl from "../../trash.svg";
 function ArgumentNode({ data }) {
     const dispatch = useDispatch();
     const status = useSelector((state) => state.flow.status);
+
+    if (!window.showdown) {
+        window.showdown = new Converter();
+    }
 
     const onMultiselectChange = useCallback((value, event) => {
         if (event.action == "remove") {
@@ -91,15 +96,12 @@ function ArgumentNode({ data }) {
 
     return (
         <div className={className}>
-            <Handle type="target" />
+            <Handle type="target" position={Position.Bottom} />
             {data.sourceHandle && (
-                <Handle type="source" className={handleClass} />
-            )}
-            {data.targetHandle && (
                 <Handle
-                    type="target"
-                    position={Position.Top}
+                    type="source"
                     className={handleClass}
+                    position={Position.Bottom}
                 />
             )}
             {data.editingMode && false && (

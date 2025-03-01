@@ -6,35 +6,32 @@ import {
     addEdge,
     closeFlyout,
     removeEdge,
-    setInitialStateForRound,
     setShouldCenterOnActive,
-} from "../slices/flowSlice";
+} from "./slices/flowSlice";
 
-import ReactFlow, { Panel, ConnectionMode } from "reactflow";
+import { loadLocalStorage } from "./utils/storage";
+
+import { ReactFlow, Panel, ConnectionMode } from "@xyflow/react";
+
 import { Helmet } from "react-helmet-async";
 
 import { Converter } from "showdown";
 
-import ArgumentNode from "../components/argumentNode";
-import HighlightedCardNode from "../components/highlightedCardNode";
-import SpeechLabelNode from "../components/speechLabelNode";
-import SpeechHeaders from "../components/speechHeaders";
-import { TextEntryNode } from "../components/textEntryNode";
-import TopNav from "../components/topNav";
+import ArgumentNode from "./components/argumentNode";
+import HighlightedCardNode from "./components/highlightedCardNode";
+import SpeechLabelNode from "./components/speechLabelNode";
+import SpeechHeaders from "./components/speechHeaders";
+import { TextEntryNode } from "./components/textEntryNode";
+import TopNav from "./components/topNav";
 
-import handleKeyPresses from "../utils/movement";
+import handleKeyPresses from "./utils/movement";
 
-import dataLoader from "../components/dataLoader";
-
-import faviconUrl from "../../favicon.ico";
-import { generateDimensions } from "../utils/dimensions";
-import { renderCards, renderEdges } from "../utils/rendering";
+import faviconUrl from "../favicon.ico";
+import { generateDimensions } from "./utils/dimensions";
+import { renderCards, renderEdges } from "./utils/rendering";
 
 window.instance = {};
-
-function onEdgesChange(event) {
-    addEdge();
-}
+window.shiftPressed = null;
 
 const nodeTypes = {
     textEntry: TextEntryNode,
@@ -45,8 +42,6 @@ const nodeTypes = {
 
 export default function Flow(props) {
     const cards = useSelector((state) => state.flow.cards);
-    const cellId = useSelector((state) => state.flow.cellId);
-    const speechId = useSelector((state) => state.flow.speechId);
     const editingMode = useSelector((state) => state.flow.editingMode);
     const selectedTags = useSelector((state) => state.flow.selectedTags);
     const shouldCenterOnActive = useSelector(
@@ -61,9 +56,7 @@ export default function Flow(props) {
     handleKeyPresses();
 
     useEffect(() => {
-        dataLoader(props.round, (round) =>
-            dispatch(setInitialStateForRound(round))
-        );
+        loadLocalStorage(dispatch);
         return () => {};
     }, [dispatch]);
 
@@ -88,7 +81,9 @@ export default function Flow(props) {
     const onInit = (instance) => {
         window.instance = instance;
 
-        window.showdown = new Converter();
+        if (!window.showdown) {
+            window.showdown = new Converter();
+        }
     };
 
     const onNodeClick = (event, node, cards) => {
@@ -105,10 +100,6 @@ export default function Flow(props) {
         if (editingMode) {
             dispatch(removeEdge(edge));
         }
-    };
-
-    const onConnect = (event) => {
-        dispatch(addEdge({ source: event.source, target: event.target }));
     };
 
     const closeFlyoutEvent = () => {
@@ -141,37 +132,32 @@ export default function Flow(props) {
                     height: `${Math.max(500, yPosition + 2 * yPadding)}px`,
                 }}
             >
-                <ReactFlow
-                    nodes={renderedNodes}
-                    edges={renderedEdges}
-                    nodeTypes={nodeTypes}
-                    onEdgesChange={onEdgesChange}
-                    onConnect={onConnect}
-                    onInit={onInit}
-                    onNodeClick={(event, node) => onNodeClick(event, node, cards)}
-                    onEdgeClick={onEdgeClick}
-                    onlyRenderVisibleElements={false}
-                    preventScrolling={false}
-                    zoomOnScroll={false}
-                    zoomOnDoubleClick={false}
-                    panOnScroll={false}
-                    panOnScrollMode={"vertical"}
-                    proOptions={{ hideAttribution: true }}
-                    panOnDrag={false}
-                    nodesDraggable={false}
-                    nodesConnectable={editingMode}
-                    nodesFocusable={editingMode}
-                    onClick={closeFlyoutEvent}
-                    defaultEdgeOptions={defaultEdgeOptions}
-                    connectionLineStyle={{
-                        stroke: "#2563eb",
-                        strokeWidth: 3,
-                        strokeDasharray: "5,5",
-                    }}
-                    connectionMode={ConnectionMode.Loose}
-                >
-                    <Panel position="top-left"></Panel>
-                </ReactFlow>
+                    <ReactFlow
+                        nodes={renderedNodes}
+                        edges={renderedEdges}
+                        nodeTypes={nodeTypes}
+                        onInit={onInit}
+                        onNodeClick={(event, node) =>
+                            onNodeClick(event, node, cards)
+                        }
+                        onEdgeClick={onEdgeClick}
+                        onlyRenderVisibleElements={false}
+                        preventScrolling={false}
+                        zoomOnScroll={false}
+                        zoomOnDoubleClick={false}
+                        panOnScroll={false}
+                        panOnScrollMode={"vertical"}
+                        proOptions={{ hideAttribution: true }}
+                        panOnDrag={false}
+                        nodesDraggable={false}
+                        nodesConnectable={false}
+                        nodesFocusable={editingMode}
+                        onClick={closeFlyoutEvent}
+                        defaultEdgeOptions={defaultEdgeOptions}
+                        connectionMode={ConnectionMode.Loose}
+                    >
+                        <Panel position="top-left"></Panel>
+                    </ReactFlow>
             </div>
         </div>
     );

@@ -1,21 +1,25 @@
 import * as React from "react";
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
     editCardText,
     escapeStatus,
+    confirmEdge,
     moveUp,
     moveDown,
     moveLeft,
     moveRight,
     setSpeeches,
+    setShiftPressed,
 } from "../slices/flowSlice";
 
 export default function handleKeyPresses() {
-    const [keyPressed, setKeyPressed] = React.useState(false);
     const dispatch = useDispatch();
+    const cards = useSelector((state) => state.flow.cards);
+    const cellId = useSelector((state) => state.flow.cellId);
+    const speechId = useSelector((state) => state.flow.speechId);
 
-    function moveHandler({ key, event }) {
+    function moveHandlerKeyDown({ key, event }) {
         if (key === "ArrowDown") {
             dispatch(moveDown());
         } else if (key === "ArrowUp") {
@@ -29,7 +33,9 @@ export default function handleKeyPresses() {
         } else if (key === "Escape") {
             dispatch(escapeStatus());
         } else if (key === "Enter") {
-            if (window.status === "node") {
+            if (window.shiftPressed) {
+                dispatch(confirmEdge());
+            } else if (window.status === "node") {
                 const text =
                     document.getElementsByClassName("text-entry-node")[0]
                         .innerText;
@@ -44,15 +50,23 @@ export default function handleKeyPresses() {
                 dispatch(setSpeeches());
                 dispatch(moveDown());
             }
+        } else if (key === "Shift") {
+            dispatch(setShiftPressed(true));
+        }
+    }
+
+    function moveHandlerKeyUp({ key, event }) {
+        if (key === "Shift") {
+            dispatch(setShiftPressed(false));
         }
     }
 
     React.useEffect(() => {
-        window.addEventListener("keydown", moveHandler);
+        window.addEventListener("keydown", moveHandlerKeyDown);
+        window.addEventListener("keyup", moveHandlerKeyUp);
         return () => {
-            window.removeEventListener("keydown", moveHandler);
+            window.removeEventListener("keydown", moveHandlerKeyDown);
+            window.removeEventListener("keyup", moveHandlerKeyUp);
         };
     }, []);
-
-    return keyPressed;
 }
