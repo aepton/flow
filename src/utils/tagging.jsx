@@ -1,9 +1,10 @@
 import { addItemToTags } from "../slices/flowSlice";
 
-export function generateTagsFromText(text, clusterId, dispatch) {
+export function generateTagsFromText(text, currentTags, clusterId, dispatch) {
     const tagPrompt = `
 Generate a raw JSON list of tags that summarize the topics being discussed by the following text and the techniques being
 employed by the author: "${text}"
+If possible, reuse any applicable tags from the following list: "${currentTags}"
 Do not return anything but a one-level deep list of strings, like ["a", "b", "c"] - your entire response should be a valid
 JSON list of strings and nothing else.
 `

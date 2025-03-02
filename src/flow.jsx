@@ -44,7 +44,7 @@ const nodeTypes = {
 export default function Flow(props) {
     const cards = useSelector((state) => state.flow.cards);
     const editingMode = useSelector((state) => state.flow.editingMode);
-    const selectedTags = useSelector((state) => state.flow.selectedTags);
+    
     const shouldCenterOnActive = useSelector(
         (state) => state.flow.shouldCenterOnActive
     );
@@ -65,7 +65,6 @@ export default function Flow(props) {
         generateDimensions(speeches);
 
     const { renderedNodes, dirty, yPosition, recenterY } = renderCards(
-        selectedTags,
         columnWidth,
         columnPadding,
         yPadding,

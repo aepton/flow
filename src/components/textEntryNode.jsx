@@ -6,12 +6,9 @@ import { generateTagsFromText } from "../utils/tagging";
 
 export function TextEntryNode({ data }) {
     const dispatch = useDispatch();
-    const flow = useSelector((state) => state.flow);
     const speechId = useSelector((state) => state.flow.speechId);
+    const tags = useSelector((state) => state.flow.tags);
     const cardId = crypto.randomUUID();
-
-    const clusters = useSelector((state) => state.flow.clusters);
-    const clusterId = clusters[`card_${cardId}`];
 
     const onChange = useCallback(event => {
         if (event.target.value.includes("\n")) {
@@ -20,7 +17,7 @@ export function TextEntryNode({ data }) {
                 dispatch(addCardAfter({ card: val, speechId, cardId }));
                 event.target.value = "";
 
-                generateTagsFromText(val, clusterId, dispatch);
+                generateTagsFromText(val, Object.keys(tags).join(", "), cardId, dispatch);
             }
         }
     }, []);

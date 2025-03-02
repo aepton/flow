@@ -33,7 +33,6 @@ export default function TopNav(props) {
     const allTags = Object.keys(tags);
 
     const onSetSelectedTags = (event) => {
-        console.log(event);
         dispatch(setSelectedTags(event));
     };
 

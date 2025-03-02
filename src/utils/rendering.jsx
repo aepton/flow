@@ -10,7 +10,6 @@ import { generateClustersFromEdges } from "./clusters";
 import { useSelector, useDispatch } from "react-redux";
 
 export function renderCards(
-    selectedTags,
     columnWidth,
     columnPadding,
     yPadding,
@@ -20,6 +19,7 @@ export function renderCards(
     const cards = useSelector((state) => state.flow.cards);
     const cardIdx = useSelector((state) => state.flow.cardIdx);
     const cellId = useSelector((state) => state.flow.cellId);
+    const selectedTags = useSelector((state) => state.flow.selectedTags);
     const shiftPressed = useSelector((state) => state.flow.shiftPressed);
     const speechId = useSelector((state) => state.flow.speechId);
     const edges = useSelector((state) => state.flow.edges);
@@ -43,8 +43,6 @@ export function renderCards(
         speechCards.forEach((card, cardIdx) => {
             const cardId = `card_${card.id}`;
 
-            const clusterId = clusters[cardId];
-
             const active = cellId === cardIdx && speechId === speechCardIdx;
 
             const visible = Object.keys(card).indexOf("height") !== -1;
@@ -54,7 +52,7 @@ export function renderCards(
 
             const cardTags = [];
             Object.keys(tags).forEach((key) => {
-                if (tags[key].indexOf(clusterId) != -1) {
+                if (tags[key].indexOf(card.id) != -1) {
                     cardTags.push(key);
                 }
             });
@@ -65,7 +63,7 @@ export function renderCards(
             } else {
                 isSelectedTag = true;
                 selectedTags.forEach((tag) => {
-                    if (tags[tag].indexOf(clusterId) === -1) {
+                    if (tags[tag].indexOf(card.id) === -1) {
                         isSelectedTag = false;
                     }
                 });
@@ -95,10 +93,10 @@ export function renderCards(
                         speech: card.speech,
                         clusterHead: clusters[cardId] === cardId,
                         addTag: (tag) =>
-                            dispatch(addItemToTags({ item: clusterId, tags: [tag] })),
+                            dispatch(addItemToTags({ item: cardId, tags: [tag] })),
                         removeTag: (tag) =>
                             dispatch(
-                                removeTagFromItem({ item: clusterId, tag })
+                                removeTagFromItem({ item: cardId, tag })
                             ),
                         createTag: (tag) => dispatch(createTag(tag)),
                         nodeIdx: cardIdx,
