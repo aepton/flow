@@ -1,6 +1,5 @@
 import {
-    addItemToTag,
-    createTag,
+    addItemToTags,
     removeTagFromItem,
     setCardHeightWidth,
 } from "../slices/flowSlice";
@@ -25,6 +24,7 @@ export function renderCards(
     const speechId = useSelector((state) => state.flow.speechId);
     const edges = useSelector((state) => state.flow.edges);
     const tags = useSelector((state) => state.flow.tags);
+    const status = useSelector((state) => state.flow.status);
 
     const allTags = Object.keys(tags);
     const { clusters } = generateClustersFromEdges(edges);
@@ -58,7 +58,6 @@ export function renderCards(
                     cardTags.push(key);
                 }
             });
-            console.log(tags, cardTags);
 
             let isSelectedTag = false;
             if (selectedTags.length === 0) {
@@ -96,7 +95,7 @@ export function renderCards(
                         speech: card.speech,
                         clusterHead: clusters[cardId] === cardId,
                         addTag: (tag) =>
-                            dispatch(addItemToTag({ item: clusterId, tag })),
+                            dispatch(addItemToTags({ item: clusterId, tags: [tag] })),
                         removeTag: (tag) =>
                             dispatch(
                                 removeTagFromItem({ item: clusterId, tag })
@@ -137,16 +136,16 @@ export function renderCards(
             renderedNodes.push(
                 generateEntryNode(
                     speechCardIdx,
-                    cards[speechCardIdx].length,
                     columnWidth,
-                    columnPadding
+                    columnPadding,
+                    yPosition
                 )
             );
         }
     });
 
     if (cards[0].length === 0) {
-        renderedNodes.push(generateEntryNode(0, 0, columnWidth, columnPadding));
+        renderedNodes.push(generateEntryNode(0, columnWidth, columnPadding, 0));
     }
 
     if (activeNode) {

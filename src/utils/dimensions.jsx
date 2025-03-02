@@ -9,7 +9,7 @@ export function generateDimensions(speeches) {
         (dimensions.windowWidth -
             dimensions.columnPadding * (speeches.length - 1)) /
             speeches.length,
-        200
+        350
     );
     return dimensions;
 }

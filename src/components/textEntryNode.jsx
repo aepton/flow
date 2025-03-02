@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
-import { addCardAfter, addItemToTag, createTag } from "../slices/flowSlice";
+import { addCardAfter } from "../slices/flowSlice";
 import { generateTagsFromText } from "../utils/tagging";
 
 export function TextEntryNode({ data }) {
@@ -13,19 +13,14 @@ export function TextEntryNode({ data }) {
     const clusters = useSelector((state) => state.flow.clusters);
     const clusterId = clusters[`card_${cardId}`];
 
-    const onChange = useCallback(async (event) => {
+    const onChange = useCallback(event => {
         if (event.target.value.includes("\n")) {
             const val = event.target.value.replace("\n", "");
             if (val != "") {
                 dispatch(addCardAfter({ card: val, speechId, cardId }));
-
-                const tags = await generateTagsFromText(val);
-                tags.forEach((tag) => {
-                    dispatch(createTag({ tag }));
-                    dispatch(addItemToTag({ item: clusterId, tag }));
-                });
-
                 event.target.value = "";
+
+                generateTagsFromText(val, clusterId, dispatch);
             }
         }
     }, []);
@@ -45,15 +40,15 @@ export function TextEntryNode({ data }) {
 
 export function generateEntryNode(
     speechId,
-    cardsLength,
     columnWidth,
-    columnPadding
+    columnPadding,
+    yPosition
 ) {
     return {
-        id: "card-entry-" + speechId,
+        id: crypto.randomUUID(),
         position: {
             x: columnWidth * speechId + (columnPadding * speechId + 1),
-            y: 100 * (cardsLength + 1.2),
+            y: yPosition
         },
         type: "textEntry",
         style: { border: "none", width: columnWidth },

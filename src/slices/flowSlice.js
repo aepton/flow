@@ -33,7 +33,7 @@ export const flowSlice = createSlice({
         speechNodes: [],
         speechYPosition: 0,
         status: "node",
-        tags: {},
+        tags: {"Winner": [], "Loser": []},
         title: "",
         url: null,
     },
@@ -53,6 +53,7 @@ export const flowSlice = createSlice({
                 state.cellId = state.cards[state.speechId].length;
             }
             state.cardIdx += 1;
+            state.clusters[`card_${action.payload.cardId}`] = `card_${action.payload.cardId}`;
         },
         addEdge: (state, action) => {
             state.edges.push(action.payload);
@@ -217,21 +218,19 @@ export const flowSlice = createSlice({
                 state.status = "node";
             }
         },
-        addItemToTag: (state, action) => {
-            console.log(action);
-            const { item, tag } = action.payload;
-            state.tags[tag].push(item);
+        addItemToTags: (state, action) => {
+            const { item, tags } = action.payload;
+            tags.forEach((tag) => {
+                if (Object.keys(state.tags).indexOf(tag) === -1) {
+                    state.tags[tag] = [];
+                }
+                state.tags[tag].push(item);
+            });
         },
         removeTagFromItem: (state, action) => {
             const { item, tag } = action.payload;
             if (Object.keys(state.tags).indexOf(tag) !== -1) {
                 state.tags[tag].splice(state.tags[tag].indexOf(item));
-            }
-        },
-        createTag: (state, action) => {
-            const { tag } = action.payload;
-            if (Object.keys(state.tags).indexOf(tag) == -1) {
-                state.tags[tag] = [];
             }
         },
         setInitialStateForRound: (state, action) => {
@@ -292,10 +291,9 @@ export const {
     addCardAfter,
     addEdge,
     confirmEdge,
-    addItemToTag,
+    addItemToTags,
     addSpeech,
     closeFlyout,
-    createTag,
     editCardText,
     editSpeechTitle,
     escapeStatus,
