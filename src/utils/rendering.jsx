@@ -6,30 +6,34 @@ import {
 
 import { generateEntryNode } from "../components/textEntryNode";
 import { generateClustersFromEdges } from "./clusters";
+import { generateDimensions } from "./dimensions";
 
-import { useSelector, useDispatch } from "react-redux";
+export function renderCards(flow, dispatch) {
+    /*
+    if (!flow) {
+        const { columnWidth, columnPadding } = generateDimensions([]);
+        addNodes(generateEntryNode(0, columnWidth, columnPadding, 0));
+        return;
+    }
+    */
 
-export function renderCards(
-    columnWidth,
-    columnPadding,
-    yPadding,
-    recenterPadding,
-    shouldCenterOnActive
-) {
-    const cards = useSelector((state) => state.flow.cards);
-    const cardIdx = useSelector((state) => state.flow.cardIdx);
-    const cellId = useSelector((state) => state.flow.cellId);
-    const selectedTags = useSelector((state) => state.flow.selectedTags);
-    const shiftPressed = useSelector((state) => state.flow.shiftPressed);
-    const speechId = useSelector((state) => state.flow.speechId);
-    const edges = useSelector((state) => state.flow.edges);
-    const tags = useSelector((state) => state.flow.tags);
-    const status = useSelector((state) => state.flow.status);
+    const {
+        cards,
+        cellId,
+        selectedTags,
+        shiftPressed,
+        speeches,
+        speechId,
+        edges,
+        tags,
+        shouldCenterOnActive,
+    } = flow;
+
+    const { columnWidth, columnPadding, yPadding, recenterPadding } =
+        generateDimensions(speeches);
 
     const allTags = Object.keys(tags);
     const { clusters } = generateClustersFromEdges(edges);
-
-    const dispatch = useDispatch();
 
     let recenterY = -1;
     let yPosition = 0;
@@ -47,6 +51,7 @@ export function renderCards(
 
             const visible = Object.keys(card).indexOf("height") !== -1;
             if (!visible) {
+                console.log("not visible", cardId);
                 dirty = true;
             }
 
@@ -93,11 +98,11 @@ export function renderCards(
                         speech: card.speech,
                         clusterHead: clusters[cardId] === cardId,
                         addTag: (tag) =>
-                            dispatch(addItemToTags({ item: cardId, tags: [tag] })),
-                        removeTag: (tag) =>
                             dispatch(
-                                removeTagFromItem({ item: cardId, tag })
+                                addItemToTags({ item: cardId, tags: [tag] })
                             ),
+                        removeTag: (tag) =>
+                            dispatch(removeTagFromItem({ item: cardId, tag })),
                         createTag: (tag) => dispatch(createTag(tag)),
                         nodeIdx: cardIdx,
                     },
@@ -105,7 +110,6 @@ export function renderCards(
                     type: "argument",
                     style: {
                         width: columnWidth,
-                        opacity: visible ? 1 : 0,
                         border: isShiftBasisTag
                             ? "2px dashed var(--fun-color)"
                             : "none",
@@ -150,24 +154,22 @@ export function renderCards(
         renderedNodes.push(activeNode);
     }
 
-    return { renderedNodes, dirty, yPosition, recenterY };
+    return { renderedNodes, recenterY, yPosition, dirty };
 }
 
-export function renderEdges(dirty) {
-    const edges = useSelector((state) => state.flow.edges);
-    const provisionalEdge = useSelector((state) => state.flow.provisionalEdge);
+export function renderEdges(flow, dirty, getNodes, dispatch) {
+    const { edges, provisionalEdge } = flow;
 
-    const dispatch = useDispatch();
     const renderedEdges = [];
 
     if (dirty) {
         setTimeout(() => {
-            if (!window.instance.getNodes) {
+            if (!getNodes) {
                 return;
             }
 
             const info = {};
-            window.instance.getNodes().forEach((node) => {
+            getNodes().forEach((node) => {
                 if (node.id.startsWith("card_")) {
                     info[node.id] = { height: node.height, width: node.width };
                 }
@@ -184,7 +186,6 @@ export function renderEdges(dirty) {
                     stroke: "var(--fun-color)",
                     strokeWidth: 3,
                 },
-                type: "smart",
             });
         });
     }
@@ -199,7 +200,6 @@ export function renderEdges(dirty) {
                 strokeDasharray: "5,5",
             },
             animated: true,
-            type: "smart",
         });
     }
 

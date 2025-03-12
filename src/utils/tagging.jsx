@@ -7,7 +7,7 @@ employed by the author: "${text}"
 If possible, reuse any applicable tags from the following list: "${currentTags}"
 Do not return anything but a one-level deep list of strings, like ["a", "b", "c"] - your entire response should be a valid
 JSON list of strings and nothing else.
-`
+`;
     return fetch("http://localhost:11434/api/generate", {
         method: "POST",
         headers: {
@@ -27,9 +27,14 @@ JSON list of strings and nothing else.
         })
         .then((jsonData) => {
             try {
-                dispatch(addItemToTags({ item: clusterId, tags: JSON.parse(jsonData.response).slice(0, 5) }));
+                dispatch(
+                    addItemToTags({
+                        item: clusterId,
+                        tags: JSON.parse(jsonData.response).slice(0, 5),
+                    })
+                );
             } catch (e) {
-                console.error('error parsing', e, jsonData.response);
+                console.error("error parsing", e, jsonData.response);
             }
         })
         .catch((error) => {

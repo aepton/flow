@@ -11,7 +11,7 @@ import {
     moveDown,
     removeCard,
     setSelectedNode,
-    setStatus
+    setStatus,
 } from "../slices/flowSlice";
 
 import leftUrl from "../../left.svg";

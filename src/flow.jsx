@@ -1,18 +1,22 @@
 import * as React from "react";
 
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
-    addEdge,
     closeFlyout,
     removeEdge,
     setShouldCenterOnActive,
-    setSelectedNode
+    setSelectedNode,
 } from "./slices/flowSlice";
 
 import { loadLocalStorage } from "./utils/storage";
 
-import { ReactFlow, Panel, ConnectionMode } from "@xyflow/react";
+import {
+    ReactFlow,
+    Panel,
+    ConnectionMode,
+    useReactFlow,
+} from "@xyflow/react";
 
 import { Helmet } from "react-helmet-async";
 
@@ -23,7 +27,6 @@ import HighlightedCardNode from "./components/highlightedCardNode";
 import SpeechLabelNode from "./components/speechLabelNode";
 import SpeechHeaders from "./components/speechHeaders";
 import { TextEntryNode } from "./components/textEntryNode";
-import TopNav from "./components/topNav";
 
 import handleKeyPresses from "./utils/movement";
 
@@ -31,8 +34,7 @@ import faviconUrl from "../favicon.ico";
 import { generateDimensions } from "./utils/dimensions";
 import { renderCards, renderEdges } from "./utils/rendering";
 
-window.instance = {};
-window.shiftPressed = null;
+import ELK from 'elkjs/lib/elk.bundled.js';
 
 const nodeTypes = {
     textEntry: TextEntryNode,
@@ -42,17 +44,39 @@ const nodeTypes = {
 };
 
 export default function Flow(props) {
-    const cards = useSelector((state) => state.flow.cards);
-    const editingMode = useSelector((state) => state.flow.editingMode);
-    
-    const shouldCenterOnActive = useSelector(
-        (state) => state.flow.shouldCenterOnActive
-    );
-    const speeches = useSelector((state) => state.flow.speeches);
+    const flow = useSelector((state) => state.flow);
 
-    const title = useSelector((state) => state.flow.title);
+    const {
+        cards,
+        editingMode,
+        shouldCenterOnActive,
+        speeches,
+        title,
+    } = flow;
+
+    const { columnPadding, columnWidth, yPadding } = generateDimensions(speeches);
 
     const dispatch = useDispatch();
+    const instance = useReactFlow();
+
+    const { renderedNodes, recenterY, yPosition, dirty } = renderCards(flow, dispatch);
+    const renderedEdges = renderEdges(flow, dirty, instance.getNodes, dispatch);
+
+    const elk = new ELK();
+
+    const layoutedNodes = elk.layout({
+        nodes: renderedNodes,
+        edges: renderedEdges,
+        options: {
+          "elk.algorithm": "layered",
+          "elk.direction": "RIGHT",
+          "elk.spacing.nodeNode": 50
+        }
+      });
+
+    useEffect(() => {
+        console.log('Component rendered', { props, flow });
+      });
 
     handleKeyPresses();
 
@@ -61,26 +85,11 @@ export default function Flow(props) {
         return () => {};
     }, [dispatch]);
 
-    const { columnWidth, columnPadding, yPadding, recenterPadding } =
-        generateDimensions(speeches);
-
-    const { renderedNodes, dirty, yPosition, recenterY } = renderCards(
-        columnWidth,
-        columnPadding,
-        yPadding,
-        recenterPadding,
-        shouldCenterOnActive
-    );
-
     if (shouldCenterOnActive && recenterY != -1) {
         setShouldCenterOnActive(false);
     }
 
-    const renderedEdges = renderEdges(dirty);
-
-    const onInit = (instance) => {
-        window.instance = instance;
-
+    const onInit = () => {
         if (!window.showdown) {
             window.showdown = new Converter();
         }
@@ -123,7 +132,6 @@ export default function Flow(props) {
                 <title>Flow: {title}</title>
                 <link rel="icon" href={faviconUrl} />
             </Helmet>
-            <TopNav debug={props.debug} />
             <SpeechHeaders
                 columnWidth={columnWidth}
                 columnPadding={columnPadding}
@@ -135,32 +143,32 @@ export default function Flow(props) {
                     height: `${Math.max(500, yPosition + 2 * yPadding)}px`,
                 }}
             >
-                    <ReactFlow
-                        nodes={renderedNodes}
-                        edges={renderedEdges}
-                        nodeTypes={nodeTypes}
-                        onInit={onInit}
-                        onNodeClick={(event, node) =>
-                            onNodeClick(event, node, cards)
-                        }
-                        onEdgeClick={onEdgeClick}
-                        onlyRenderVisibleElements={false}
-                        preventScrolling={false}
-                        zoomOnScroll={false}
-                        zoomOnDoubleClick={false}
-                        panOnScroll={false}
-                        panOnScrollMode={"vertical"}
-                        proOptions={{ hideAttribution: true }}
-                        panOnDrag={false}
-                        nodesDraggable={false}
-                        nodesConnectable={false}
-                        nodesFocusable={editingMode}
-                        onClick={closeFlyoutEvent}
-                        defaultEdgeOptions={defaultEdgeOptions}
-                        connectionMode={ConnectionMode.Loose}
-                    >
-                        <Panel position="top-left"></Panel>
-                    </ReactFlow>
+                <ReactFlow
+                    nodes={layoutedNodes}
+                    edges={renderedEdges}
+                    nodeTypes={nodeTypes}
+                    onInit={onInit}
+                    onNodeClick={(event, node) =>
+                        onNodeClick(event, node, cards)
+                    }
+                    onEdgeClick={onEdgeClick}
+                    onlyRenderVisibleElements={false}
+                    preventScrolling={false}
+                    zoomOnScroll={false}
+                    zoomOnDoubleClick={false}
+                    panOnScroll={false}
+                    panOnScrollMode={"vertical"}
+                    proOptions={{ hideAttribution: true }}
+                    panOnDrag={false}
+                    nodesDraggable={false}
+                    nodesConnectable={false}
+                    nodesFocusable={editingMode}
+                    onClick={closeFlyoutEvent}
+                    defaultEdgeOptions={defaultEdgeOptions}
+                    connectionMode={ConnectionMode.Loose}
+                >
+                    <Panel position="top-left"></Panel>
+                </ReactFlow>
             </div>
         </div>
     );

@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
-import { addCardAfter } from "../slices/flowSlice";
+import { addCardAfter, setEditingCardId } from "../slices/flowSlice";
 import { generateTagsFromText } from "../utils/tagging";
 
 export function TextEntryNode({ data }) {
@@ -10,14 +10,21 @@ export function TextEntryNode({ data }) {
     const tags = useSelector((state) => state.flow.tags);
     const cardId = crypto.randomUUID();
 
-    const onChange = useCallback(event => {
+    setEditingCardId(cardId);
+
+    const onChange = useCallback((event) => {
         if (event.target.value.includes("\n")) {
             const val = event.target.value.replace("\n", "");
             if (val != "") {
                 dispatch(addCardAfter({ card: val, speechId, cardId }));
                 event.target.value = "";
 
-                generateTagsFromText(val, Object.keys(tags).join(", "), cardId, dispatch);
+                generateTagsFromText(
+                    val,
+                    Object.keys(tags).join(", "),
+                    cardId,
+                    dispatch
+                );
             }
         }
     }, []);
@@ -45,7 +52,7 @@ export function generateEntryNode(
         id: crypto.randomUUID(),
         position: {
             x: columnWidth * speechId + (columnPadding * speechId + 1),
-            y: yPosition
+            y: yPosition,
         },
         type: "textEntry",
         style: { border: "none", width: columnWidth },

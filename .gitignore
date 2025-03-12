@@ -5,3 +5,4 @@ web_modules
 .glitchdotcom.json
 build
 src/data/.ipynb_checkpoints
+.DS_Store

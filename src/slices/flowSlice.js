@@ -17,12 +17,15 @@ export const flowSlice = createSlice({
         cellId: 0,
         clusters: {},
         date: null,
+        dirty: false,
         edges: [],
+        editingCardId: null,
         editingMode: true,
         flyoutOpen: false,
         instance: null,
         moderators: [],
         provisionalEdge: null,
+        recenterY: -1,
         selectedNode: null,
         selectedTags: [],
         shiftPressed: null,
@@ -33,9 +36,10 @@ export const flowSlice = createSlice({
         speechNodes: [],
         speechYPosition: 0,
         status: "node",
-        tags: {"Winner": [], "Loser": []},
+        tags: { Winner: [], Loser: [] },
         title: "",
         url: null,
+        yPosition: 0,
     },
     reducers: {
         addCardAfter: (state, action) => {
@@ -53,7 +57,8 @@ export const flowSlice = createSlice({
                 state.cellId = state.cards[state.speechId].length;
             }
             state.cardIdx += 1;
-            state.clusters[`card_${action.payload.cardId}`] = `card_${action.payload.cardId}`;
+            state.clusters[`card_${action.payload.cardId}`] =
+                `card_${action.payload.cardId}`;
         },
         addEdge: (state, action) => {
             state.edges.push(action.payload);
@@ -62,7 +67,6 @@ export const flowSlice = createSlice({
             state.edges.push(state.provisionalEdge);
             state.provisionalEdge = null;
             state.shiftPressed = null;
-            window.shiftPressed = state.shiftPressed;
         },
         addSpeech: (state, action) => {
             state.speeches.push(action.payload);
@@ -164,8 +168,17 @@ export const flowSlice = createSlice({
             });
             state.cards = positionCards;
         },
+        setDirty: (state, action) => {
+            state.dirty = action.payload;
+        },
+        setEditingCardId: (state, action) => {
+            state.editingCardId = action.payload;
+        },
         setInstance: (state, action) => {
             state.instance = action.payload;
+        },
+        setRecenterY: (state, action) => {
+            state.recenterY = action.payload;
         },
         setSelectedNode: (state, action) => {
             state.cellId = action.payload;
@@ -210,8 +223,10 @@ export const flowSlice = createSlice({
             );
         },
         setStatus: (state, action) => {
-            window.status = action.payload;
             state.status = action.payload;
+        },
+        setYPosition: (state, action) => {
+            state.yPosition = action.payload;
         },
         escapeStatus: (state) => {
             if (state.status === "tagging") {
@@ -307,8 +322,11 @@ export const {
     removeTagFromItem,
     setCards,
     setCardHeightWidth,
+    setDirty,
+    setEditingCardId,
     setInitialStateForRound,
     setInstance,
+    setRecenterY,
     setSelectedNode,
     setSelectedTags,
     setShiftPressed,
@@ -317,6 +335,7 @@ export const {
     setSpeechNodes,
     setSpeechYPosition,
     setStatus,
+    setYPosition,
     toggleFlyoutOpen,
     toggleEditingMode,
 } = flowSlice.actions;

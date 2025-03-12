@@ -11,15 +11,16 @@ import {
     moveRight,
     setSpeeches,
     setShiftPressed,
+    setStatus,
 } from "../slices/flowSlice";
 
 export default function handleKeyPresses() {
     const dispatch = useDispatch();
-    const cards = useSelector((state) => state.flow.cards);
-    const cellId = useSelector((state) => state.flow.cellId);
-    const speechId = useSelector((state) => state.flow.speechId);
+    const { cards, cellId, editingCardId, shiftPressed, speechId, status } =
+        useSelector((state) => state.flow);
 
-    function moveHandlerKeyDown({ key, event }) {
+    function moveHandlerKeyDown({ key }) {
+        console.log(key);
         if (key === "ArrowDown") {
             dispatch(moveDown());
         } else if (key === "ArrowUp") {
@@ -29,24 +30,19 @@ export default function handleKeyPresses() {
         } else if (key === "ArrowLeft") {
             dispatch(moveLeft());
         } else if (key === "t") {
-            window.status = "tagging";
+            dispatch(setStatus("tagging"));
         } else if (key === "Escape") {
             dispatch(escapeStatus());
         } else if (key === "Enter") {
-            if (window.shiftPressed) {
+            console.log('got enter', shiftPressed);
+            if (shiftPressed) {
                 dispatch(confirmEdge());
-            } else if (window.status === "node") {
+            } else if (status === "node") {
                 const text =
                     document.getElementsByClassName("text-entry-node")[0]
                         .innerText;
-                const id = document
-                    .getElementsByClassName("text-entry-node")[0]
-                    .parentElement.parentElement.parentElement.getAttribute(
-                        "data-id"
-                    )
-                    .split("card_")[1];
-                dispatch(editCardText({ id, text }));
-            } else if (window.status.startsWith("speechHeader")) {
+                dispatch(editCardText({ id: editingCardId, text }));
+            } else if (status.startsWith("speechHeader")) {
                 dispatch(setSpeeches());
                 dispatch(moveDown());
             }
